@@ -1,7 +1,7 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include "../libft/libft.h"
+# include "libft.h"
 # include <stdio.h>
 # include <fcntl.h>
 # include <termios.h>
@@ -26,12 +26,27 @@
 # define SYNTAX_ERROR 258
 # define UNKNOWN_COMMAND 127
 
-typedef struct job_t{
-    int id;
-    char *command;
-    pid_t pid;
-    int status;
-} job_t;
+//A simple enum to differentiate each of the token types
+typedef enum e_token_type {
+    TOKEN_WORD,       // e.g. echo, hello, world
+    TOKEN_PIPE,       // |
+    TOKEN_REDIR_IN,   // <
+    TOKEN_REDIR_OUT,  // >
+    TOKEN_APPEND,     // >>
+    TOKEN_HEREDOC,    // <<
+    TOKEN_EOF,        // end of input (optional)
+} t_token_type;
 
+
+//Each argument passed to the executable is considered a token which will be stored in this struct
+typedef struct s_token {
+    char    *str;
+    t_token_type     type;
+    struct s_token *prev;
+    struct s_token *next;
+}   t_token;
+
+void reading_line(t_token **token_list);
 
 #endif
+

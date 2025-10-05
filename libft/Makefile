@@ -6,7 +6,7 @@
 #    By: kanye <kanye@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 18:41:05 by kanye             #+#    #+#              #
-#    Updated: 2024/09/28 15:27:38 by kanye            ###   ########.fr        #
+#    Updated: 2025/10/05 18:22:26 by kanye            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,9 +19,9 @@ SRCS			=	ft_isalnum.c ft_isprint.c ft_memcmp.c  ft_putchar_fd.c ft_split.c \
 					ft_putstr_fd.c  ft_strjoin.c ft_strmapi.c ft_strtrim.c ft_striteri.c
 OBJS			= $(SRCS:.c=.o)
 
-BONUS			=	ft_lstadd_back_bonus.c ft_lstadd_front_bonus.c ft_lstclear_bonus.c \
+BONUS			=	ft_lstadd_front_bonus.c ft_lstclear_bonus.c \
 					ft_lstdelone_bonus.c ft_lstiter_bonus.c ft_lstlast_bonus.c \
-					ft_lstmap_bonus.c ft_lstnew_bonus.c ft_lstsize_bonus.c
+					ft_lstmap_bonus.c .c ft_lstsize_bonus.c
 BONUS_OBJS		= $(BONUS:.c=.o)
 
 CC				= gcc
