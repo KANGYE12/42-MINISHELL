@@ -54,7 +54,11 @@ void classify_tokens(t_token *token_list);
 void free_token_list(t_token *token_list);
 void free_split_array(char **arr);
 int syntax_check(t_token *token_list);
-t_cmd *parse_tokens_to_cmds(t_token *token_list);
+t_cmd *parse_tokens_to_cmds(t_token *token_list, t_cmd *cmd_list);
+int is_operator_char(char c);
+int is_space(char c);
+void    receive_line(char *line_read, t_token **token_list);
+
 
 #endif
 

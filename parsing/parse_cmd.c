@@ -1,7 +1,7 @@
 
 #include "../includes/minishell.h"
 
-
+/*
 static t_cmd	*ft_lstnew()
 {
 	t_cmd	*new_list;
@@ -70,3 +70,4 @@ t_cmd *parse_tokens_to_cmds(t_token *token_list, t_cmd *cmd_list)
     }
     ft_lstadd_back(cmd_list, new_cmd);
 }
+*/
