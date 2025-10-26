@@ -1,9 +1,9 @@
-
 #include "../includes/minishell.h"
 
 int main(int argc, char **argv)
 {
     t_token *token_list;
+    t_cmd *cmd_list;
     char *line;
 
     (void)argv;
@@ -21,7 +21,7 @@ int main(int argc, char **argv)
             break;
         }
 
-        // Optional: classify tokens (if your function is ready)
+        // Optional: classify tokens
         classify_tokens(token_list);
 
         // Print tokens for testing
@@ -33,17 +33,43 @@ int main(int argc, char **argv)
             tmp = tmp->next;
         }
 
-        // Free token list
-        tmp = token_list;
-        while (tmp)
+        // Check syntax
+        if (check_syntax_tokens(token_list) == SYNTAX_ERROR)
         {
-            t_token *next = tmp->next;
-            free(tmp->str); // free token string
-            free(tmp);      // free token node
-            tmp = next;
+            error_message("MINISHELL SYNTAX ERROR", token_list);
+        }
+        else
+        {
+            // Convert tokens to commands
+            cmd_list = parse_tokens_to_cmds(token_list);
+
+            // Print command list for testing
+            t_cmd *c = cmd_list;
+            int i = 0;
+            printf("\nCommands generated:\n");
+            while (c)
+            {
+                printf("Command %d:\n", i);
+                if (c->argv)
+                {
+                    for (int j = 0; c->argv[j]; j++)
+                        printf("  argv[%d]: %s\n", j, c->argv[j]);
+                }
+                if (c->infile)
+                    printf("  infile: %s\n", c->infile);
+                if (c->outfile)
+                    printf("  outfile: %s (append=%d)\n", c->outfile, c->append);
+                c = c->next;
+                i++;
+            }
+
+            // Free commands
+            free_cmd_list(&cmd_list);
         }
 
-        free(line); // free the input line
+        // Free tokens and line
+        free_token_list(&token_list);
+        free(line);
     }
 
     return 0;

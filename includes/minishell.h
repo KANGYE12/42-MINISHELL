@@ -42,23 +42,30 @@ typedef struct s_token {
 typedef struct s_cmd {
     char **argv;  //Array of strings
     char *infile; // < or << --> Read only
+
     //It writes directly in the new part
     char *outfile; // >
-    int append; //>>
+    int append; //>> only if it is 1
+
+    //next structure
     struct s_cmd *next; // For pipes
 } t_cmd;
 
-
+//tokens
 char *reading_line(t_token **token_list);
 void classify_tokens(t_token *token_list);
-void free_token_list(t_token *token_list);
-void free_split_array(char **arr);
-int syntax_check(t_token *token_list);
-t_cmd *parse_tokens_to_cmds(t_token *token_list, t_cmd *cmd_list);
 int is_operator_char(char c);
 int is_space(char c);
 void    receive_line(char *line_read, t_token **token_list);
+int	check_syntax_tokens(t_token *token_list);
 
+//utils
+void	error_message(char *message, t_token *token_list);
+void free_token_list(t_token **token_list);
+void free_cmd_list(t_cmd **cmd_list);
+
+//cmd command
+t_cmd *parse_tokens_to_cmds(t_token *token_list);
 
 #endif
 

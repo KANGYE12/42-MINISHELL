@@ -6,7 +6,7 @@
 /*   By: kanye <kanye@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 18:14:19 by kanye             #+#    #+#             */
-/*   Updated: 2025/10/11 14:44:41 by kanye            ###   ########.fr       */
+/*   Updated: 2025/10/26 19:20:42 by kanye            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,4 +66,5 @@ void				ft_lstiter(t_list *lst, void (*f)(void *));
 t_list				*ft_lstmap(t_list *lst, void *(*f)(void *),
 						void (*del)(void *));
 int					ft_strcmp(char *s1, char *s2);
+void 				ft_strcpy(char *dest, char *source);
 #endif
