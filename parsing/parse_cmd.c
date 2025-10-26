@@ -51,7 +51,6 @@ static void add_to_argv(t_cmd *new_cmd, char *str, int *args)
 	if(!temp_str)
 	{
 		perror("ERROR IN MALLOC ADD_TO_ARGV");
-		free(temp_str);
 		return ;
 	}
 	new_cmd->argv = temp_argv;
@@ -129,7 +128,7 @@ t_cmd *parse_tokens_to_cmds(t_token *token_list)
 			handle_outfile(new_cmd, current, 1);
 			current = current->next;
 		}
-        else if (current->type == TOKEN_PIPE)
+        else if (current->type == TOKEN_PIPE) //we restart the arguments since it marks as the end of the line
         {
             ft_lstadd_back(&cmd_list, new_cmd);
             new_cmd = ft_lstnew();
@@ -137,11 +136,8 @@ t_cmd *parse_tokens_to_cmds(t_token *token_list)
         }
         current = current->next;
     }
-	if(new_cmd)
-	{
-		ft_lstadd_back(&cmd_list, new_cmd);
-    	return cmd_list;
-	}
-	return NULL;
+
+	ft_lstadd_back(&cmd_list, new_cmd);
+    return cmd_list;
 }
 
