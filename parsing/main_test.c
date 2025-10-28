@@ -68,7 +68,7 @@ int main(int argc, char **argv)
         }
 
         // Free tokens and line
-        free_token_list(&token_list);
+        //free_token_list(&token_list);
         free(line);
     }
 
