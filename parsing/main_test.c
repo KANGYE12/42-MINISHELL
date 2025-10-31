@@ -1,15 +1,16 @@
 #include "../includes/minishell.h"
 
-int main(int argc, char **argv)
+int main(int argc, char **argv, char **envp)
 {
     t_token *token_list;
     t_cmd *cmd_list;
     char *line;
 
     (void)argv;
+    (void)envp;
     if (argc != 1)
         return 0;
-
+    
     while (1)
     {
         token_list = NULL;  // reset the token list for each command
@@ -62,7 +63,8 @@ int main(int argc, char **argv)
                 c = c->next;
                 i++;
             }
-
+            // Execute commands
+            executor(cmd_list, envp);
             // Free commands
             free_cmd_list(&cmd_list);
         }

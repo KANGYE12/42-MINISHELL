@@ -63,9 +63,16 @@ int	check_syntax_tokens(t_token *token_list);
 void	error_message(char *message, t_token *token_list);
 void free_token_list(t_token **token_list);
 void free_cmd_list(t_cmd **cmd_list);
+void free_double_ptr(char **ptr);
 
 //cmd command
 t_cmd *parse_tokens_to_cmds(t_token *token_list);
+
+//execute
+void executor(t_cmd *cmd_list, char **envp);
+
+//path
+char *find_cmd_path(char *cmd, char **envp);
 
 #endif
 
