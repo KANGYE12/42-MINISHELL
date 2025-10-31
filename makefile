@@ -5,7 +5,7 @@
 NAME = minishell
 
 # Find all .c files inside parsing/
-SRCS = $(wildcard parsing/*.c)
+SRCS = $(wildcard parsing/*.c execute/*.c)
 
 # Replace .c with .o (objects will be in the same folder)
 OBJS = $(SRCS:.c=.o)
