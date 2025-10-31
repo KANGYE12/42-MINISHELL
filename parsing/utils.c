@@ -16,3 +16,16 @@ int is_operator_char(char c)
         return 1;
     return 0;    
 }
+
+void free_double_ptr(char **ptr)
+{
+    int i;
+
+    i = 0;
+    while (ptr[i])
+    {
+        free(ptr[i]);
+        i++;
+    }
+    free(ptr);
+}
