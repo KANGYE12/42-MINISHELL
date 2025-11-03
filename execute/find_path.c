@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   find_path.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iisraa11 <iisraa11@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kanye <kanye@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 13:14:18 by iisraa11          #+#    #+#             */
-/*   Updated: 2025/10/31 14:09:29 by iisraa11         ###   ########.fr       */
+/*   Updated: 2025/11/03 01:29:34 by kanye            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ char *find_cmd_path(char *cmd, char **envp)
     i = -1;
     while (paths[++i])
     {
-        char *tmp = ft_strjoin(*paths, "/");
+        char *tmp = ft_strjoin(paths[i], "/");
         full_path = ft_strjoin(tmp, cmd);
         free(tmp);
         if (access(full_path, X_OK) == 0)
