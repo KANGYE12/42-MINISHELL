@@ -26,13 +26,13 @@ int main(int argc, char **argv, char **envp)
         classify_tokens(token_list);
 
         // Print tokens for testing
-        t_token *tmp = token_list;
+        /*t_token *tmp = token_list;
         printf("Token list:\n");
         while (tmp)
         {
             printf("Token: '%s'\n", tmp->str);
             tmp = tmp->next;
-        }
+        }*/
 
         // Check syntax
         if (check_syntax_tokens(token_list) == SYNTAX_ERROR)
@@ -45,7 +45,7 @@ int main(int argc, char **argv, char **envp)
             cmd_list = parse_tokens_to_cmds(token_list);
 
             // Print command list for testing
-            t_cmd *c = cmd_list;
+            /*t_cmd *c = cmd_list;
             int i = 0;
             printf("\nCommands generated:\n");
             while (c)
@@ -62,7 +62,7 @@ int main(int argc, char **argv, char **envp)
                     printf("  outfile: %s (append=%d)\n", c->outfile, c->append);
                 c = c->next;
                 i++;
-            }
+            }*/
             // Execute commands
             executor(cmd_list, envp);
             // Free commands
