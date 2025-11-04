@@ -74,5 +74,9 @@ void executor(t_cmd *cmd_list, char **envp);
 //path
 char *find_cmd_path(char *cmd, char **envp);
 
+//redirections
+void handle_redirections(t_cmd *cmd);
+void reset_redirections(void);
+
 #endif
 
