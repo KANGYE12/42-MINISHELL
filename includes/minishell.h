@@ -36,6 +36,8 @@ typedef struct s_token {
     t_token_type     type;
     struct s_token *prev;
     struct s_token *next;
+
+    int has_space;
 }   t_token;
 
 //Change the token list into a cmd command list
@@ -51,6 +53,22 @@ typedef struct s_cmd {
     struct s_cmd *next; // For pipes
 } t_cmd;
 
+typedef struct s_env
+{
+    char            *key; //USER
+    char            *value; //VALUE OF USER
+    struct s_env    *next;
+} t_env;
+
+
+//Enviroment code
+char    *get_env_value(t_env **env, char *key);
+void    free_env(t_env **env);
+t_env *init_env_list(char **envp);
+void replace_tokens_variables(t_token *token_list, t_env **env, int last_exit_status);
+
+
+
 //tokens
 char *reading_line(t_token **token_list);
 void classify_tokens(t_token *token_list);
@@ -59,20 +77,33 @@ int is_space(char c);
 void    receive_line(char *line_read, t_token **token_list);
 int	check_syntax_tokens(t_token *token_list);
 
+//special token cases
+void merge_adjacent_words(t_token **token_list);
+
 //utils
 void	error_message(char *message, t_token *token_list);
 void free_token_list(t_token **token_list);
 void free_cmd_list(t_cmd **cmd_list);
 void free_double_ptr(char **ptr);
+int is_delimiter(char c);
+int is_var_char(char c);
+
+void remove_quotes_from_list(t_token *token_list);
+
 
 //cmd command
 t_cmd *parse_tokens_to_cmds(t_token *token_list);
 
 //execute
-void executor(t_cmd *cmd_list, char **envp);
+int executor(t_cmd *cmd_list, t_env *my_env);
 
 //path
-char *find_cmd_path(char *cmd, char **envp);
+char *find_cmd_path(char *cmd, t_env *my_env);
+
+
+
+char **env_list_to_array(t_env *env_list);
+
 
 #endif
 

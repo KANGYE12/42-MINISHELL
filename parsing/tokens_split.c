@@ -18,7 +18,7 @@ static t_token	*ft_lstnew(char *str)
 }
 
 //Linking each part of the token in the list of tokens
-static void	ft_lstadd_back(t_token **lst, t_token *new)
+static void	ft_lstadd_back(t_token **lst, t_token *new, int has_space)
 {
 	t_token	*temporal;
 
@@ -34,6 +34,7 @@ static void	ft_lstadd_back(t_token **lst, t_token *new)
 		temporal = temporal->next;
 	temporal->next = new;
     new->prev = temporal;
+    new->has_space = has_space;
 }
 
 //Take into account the tha token is the new message copy from line ultil quote
@@ -44,12 +45,19 @@ static t_token *extract_token_from_quote(char *line, int *i)
     char quote;
 
     quote = line[*i];
-    start = ++(*i); //Increment before read since we dont want to add the quote
-    while(line[*i]!= '\0' && line[*i] != quote)
-       (*i)++;
-    copy = ft_substr(line, start, *i - start);    
-    if(line[*i] == quote) //Skip the last quote
+    start = *i; 
+    (*i)++;
+
+    while (line[*i] != '\0' && line[*i] != quote)
         (*i)++;
+    if (line[*i] == '\0') 
+    {
+        printf("minishell: syntax error: unclosed quote\n");
+        return (NULL);
+    }
+    copy = ft_substr(line, start, (*i - start) + 1);
+
+    (*i)++; 
     return (ft_lstnew(copy));
 }
 
@@ -58,7 +66,7 @@ static t_token *extract_token_from_operator(char *line, int *i)
 {
     char    *copy;
 
-    if ((line[*i] == '<' && line[*i + 1] == '<') || (line[*i] == '>' && line[*i + 1] == '>')) //Append or herodic found
+    if ((line[*i] == '<' && line[*i + 1] == '<') || (line[*i] == '>' && line[*i + 1] == '>')) //Append or herodic found(double operator)
     {
         copy = ft_substr(line, *i, 2); //copy 2 char from start i
         (*i)+=2; //Since it is a double operator form
@@ -78,7 +86,7 @@ static t_token *extract_token_from_word(char *line, int *i)
     char *copy;
 
     start = *i;
-    while(!is_space(line[*i]) && !is_operator_char(line[*i]) && line[*i] != '\0')
+    while(!is_delimiter(line[*i]) && line[*i] != '\0')
         (*i)++;
     copy = ft_substr(line, start, *i - start);
     return ft_lstnew(copy);
@@ -89,22 +97,28 @@ void    receive_line(char *line_read, t_token **token_list)
 {
     int i;
     t_token *new;
+    int has_space;
 
     i = 0;
+    has_space = 0;
     while(line_read[i] != '\0')
     {
-        if(line_read[i] == ' ')
+        if(is_space(line_read[i]))
         {
+            has_space = 1;
             i++;
+            while(is_space(line_read[i]))
+                i++;
             continue;
         }
         else if(line_read[i] == '\'' || line_read[i] == '"') //We put '\ to represent a literal single quote
             new = extract_token_from_quote(line_read, &i);
-        else if(is_operator_char(line_read[i]))
+        else if(is_operator_char(line_read[i])) // < > >> << 
             new = extract_token_from_operator(line_read, &i);
         else //for the actual words that doesnt start from quote
             new = extract_token_from_word(line_read, &i);   
-        ft_lstadd_back(token_list, new);
+        ft_lstadd_back(token_list, new, has_space);
+        has_space = 0;
         new = NULL;              
     }
 }

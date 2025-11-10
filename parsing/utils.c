@@ -17,6 +17,13 @@ int is_operator_char(char c)
     return 0;    
 }
 
+int is_delimiter(char c)
+{
+    if (is_space(c) || is_operator_char(c) || c == '\'' || c == '"')
+        return (1);
+    return (0);
+}
+
 void free_double_ptr(char **ptr)
 {
     int i;
@@ -28,4 +35,11 @@ void free_double_ptr(char **ptr)
         i++;
     }
     free(ptr);
+}
+
+int is_var_char(char c)
+{
+    if(ft_isalnum(c) || c == '_')
+        return 1;
+    return 0;    
 }

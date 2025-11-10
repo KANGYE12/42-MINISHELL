@@ -112,7 +112,9 @@ t_cmd *parse_tokens_to_cmds(t_token *token_list)
     while (current)
     {
         if (current->type == TOKEN_WORD)
-            add_to_argv(new_cmd, current->str, &argc);
+		{
+			add_to_argv(new_cmd, current->str, &argc);
+		}
         else if (current->type == TOKEN_REDIR_IN)
 		{
 			handle_infile(new_cmd, current);
