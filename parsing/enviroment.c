@@ -48,6 +48,7 @@ static void	ft_lstadd_back(t_env **lst, t_env *new)
 	temporal->next = new;
 }
 
+//get the enviroment value based on the key
 char   *get_env_value(t_env **env, char *key)
 {
     t_env *current;
@@ -81,10 +82,11 @@ void free_env(t_env **env)
 
 t_env *init_env_list(char **envp)
 {
-    t_env *env_list = NULL;
+    t_env *env_list;
     t_env *new;
 
     int i = 0;
+    env_list = NULL;
     while (envp[i])
     {
         new = ft_lstnew(envp[i]);

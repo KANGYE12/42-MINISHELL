@@ -66,7 +66,7 @@ char    *get_env_value(t_env **env, char *key);
 void    free_env(t_env **env);
 t_env *init_env_list(char **envp);
 void replace_tokens_variables(t_token *token_list, t_env **env, int last_exit_status);
-
+char **env_list_to_array(t_env *env_list);
 
 
 //tokens
@@ -99,10 +99,6 @@ int executor(t_cmd *cmd_list, t_env *my_env);
 
 //path
 char *find_cmd_path(char *cmd, t_env *my_env);
-
-
-
-char **env_list_to_array(t_env *env_list);
 
 
 #endif
