@@ -6,7 +6,7 @@
 /*   By: kanye <kanye@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 10:58:49 by iisraa11          #+#    #+#             */
-/*   Updated: 2025/11/12 21:14:23 by kanye            ###   ########.fr       */
+/*   Updated: 2025/11/14 17:34:55 by kanye            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,11 @@ static int exec_single(t_cmd *cmd, t_env *my_env)
     }
     if (pid == 0)
     {
+        if(cmd->heredoc_fd != -1)// we have used heredoc
+        {
+            dup2(cmd->heredoc_fd, STDIN_FILENO); //now it reads from the pipe. FILENO --> standard input from the keyboard
+            close(cmd->heredoc_fd);
+        }
         envp_array = env_list_to_array(my_env); 
         path = find_cmd_path(cmd->argv[0], my_env); 
         if (!path)

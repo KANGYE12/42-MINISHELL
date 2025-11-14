@@ -43,7 +43,8 @@ typedef struct s_token {
 //Change the token list into a cmd command list
 typedef struct s_cmd {
     char **argv;  //Array of strings
-    char *infile; // < or << --> Read only
+    char *infile; // <
+    int heredoc_fd; //<<
 
     //It writes directly in the new part
     char *outfile; // >

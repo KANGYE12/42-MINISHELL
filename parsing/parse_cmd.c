@@ -14,6 +14,7 @@ static t_cmd	*ft_lstnew()
     new_list->outfile = NULL;
     new_list->next = NULL;
     new_list->append = 0; // 1 if it is necesary append it
+	new_list->heredoc_fd = -1;
 	return (new_list);
 }
 
@@ -79,7 +80,44 @@ static void handle_infile(t_cmd *new_cmd, t_token *current_token)
 	new_cmd->infile = temp_infile;
 	ft_strcpy(new_cmd->infile, current_token->next->str);
 }
+// cat << EOF --> Im going to do the implementations using pipes
+static void handle_heredoc(t_cmd *new_cmd, t_token *current) 
+{
+	char *delimiter; //the word we need to write to stop the process
+	char *line;
+	int pipe_fd[2]; //array of 2 integers. pipe function expect two file descriptor numbers
 
+	delimiter = current->next->str; // delimiter is actually the next token after <<
+	if(pipe(pipe_fd) == -1) //pipe function create a pair of file descriptors (reading / writing)
+	{
+		perror("pipe error");
+		return ;
+	}
+	while(1)
+	{
+		line = readline("> "); //function that writes for the user to write something
+		if (!line || ft_strcmp(line, delimiter) == 0)
+        {
+            if (line)
+                free(line);
+            break;
+        }
+		write(pipe_fd[1], line, ft_strlen(line)); //writing 
+		write(pipe_fd[1], "\n", 1);
+        free(line);
+	}
+	close(pipe_fd[1]);
+	//if there is a infile, heredoc always have more priority
+	if (new_cmd->infile)
+    {
+        free(new_cmd->infile);
+        new_cmd->infile = NULL;
+    }
+	new_cmd->heredoc_fd = pipe_fd[0]; //reading for the parsing part
+}
+
+
+//cat << EOF
 static void handle_outfile(t_cmd *new_cmd, t_token *current_token, int append)
 {
 	char *temp_outfile;
@@ -99,14 +137,18 @@ static void handle_outfile(t_cmd *new_cmd, t_token *current_token, int append)
 	new_cmd->append = append;
 }	
 
-//Not finished, must to add some more details(still necesary HEREDOC)
+//Finish the redirections Israel I have given you the foundations for it you're welcome
 t_cmd *parse_tokens_to_cmds(t_token *token_list)
 {
-    t_cmd *cmd_list = NULL;
-    t_cmd *new_cmd = ft_lstnew();
-    t_token *current = token_list;
-    int argc = 0;
+    t_cmd *cmd_list;
+    t_cmd *new_cmd;
+    t_token *current;
+    int argc;
 
+	cmd_list = NULL;
+	new_cmd = ft_lstnew();
+	current = token_list;
+	argc = 0;
 	if(!new_cmd)
 		return NULL;
     while (current)
@@ -136,9 +178,13 @@ t_cmd *parse_tokens_to_cmds(t_token *token_list)
             new_cmd = ft_lstnew();
             argc = 0;
         }
+		else if(current->type == TOKEN_HEREDOC)
+		{
+			handle_heredoc(new_cmd, current);
+			current = current->next; //skip delimiter
+		}
         current = current->next;
     }
-
 	ft_lstadd_back(&cmd_list, new_cmd);
     return cmd_list;
 }

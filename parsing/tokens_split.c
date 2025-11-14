@@ -56,7 +56,6 @@ static t_token *extract_token_from_quote(char *line, int *i)
         return (NULL);
     }
     copy = ft_substr(line, start, (*i - start) + 1);
-
     (*i)++; 
     return (ft_lstnew(copy));
 }
