@@ -20,7 +20,7 @@ static char *get_var_name(const char *str, int *len)
 }
 
 
-static char *expand_variables(char *str, t_env **env, int last_exit_status)
+char *expand_variables(char *str, t_env **env, int last_exit_status)
 {
     char    *result;
     int     i = 0;
@@ -85,15 +85,12 @@ static char *expand_variables(char *str, t_env **env, int last_exit_status)
 void replace_tokens_variables(t_token *token_list, t_env **env, int last_exit_status)
 {
     t_token *current;
-    //char *temporal;
 
     current = token_list;
     while (current)
     {
         if (current->type == TOKEN_WORD)
         {
-            //temporal = expand_variables(current->str, env, last_exit_status);
-            //free(current->str);
             current->str = expand_variables(current->str, env, last_exit_status);;
         }
         current = current->next;

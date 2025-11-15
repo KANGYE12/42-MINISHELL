@@ -65,7 +65,7 @@ int main(int argc, char **argv, char **envp)
         else
         {
             // Convert tokens into commands
-            cmd_list = parse_tokens_to_cmds(token_list);
+            cmd_list = parse_tokens_to_cmds(token_list, &env_list, last_exit_status);
 
             // Print command distribution
             printf("\nCommands distribution:\n");

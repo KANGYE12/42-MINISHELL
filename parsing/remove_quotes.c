@@ -1,38 +1,46 @@
 #include "../includes/minishell.h"
 
 
-static char *clean_quotes_from_str(char *str)
+char *clean_quotes_from_str(char *delimiter) 
 {
-    char *new_str;
-    int i = 0;
-    int j = 0;
-    int in_single = 0;
-    int in_double = 0;
+	char *new_delimiter;
+	int i;
+	int j;
+	int single_quote;
+	int double_quote;
 
-    new_str = (char *)malloc(ft_strlen(str) + 1);
-    if (!new_str)
-        return (NULL);
-    
-    while (str[i])
+	new_delimiter = malloc(ft_strlen(delimiter) + 1);
+	i = 0;
+	j = 0;
+	single_quote = 0;
+	double_quote = 0;
+	if(!new_delimiter)
+		return NULL;
+	while(delimiter[i] != '\0')
+	{
+		if(delimiter[i] == '\'' && !double_quote)
+		{
+			single_quote = !single_quote;
+			i++;
+			continue;
+		}
+		if(delimiter[i] == '"' && !single_quote)
+		{
+			double_quote = !double_quote;
+			i++;
+			continue;
+		}
+		new_delimiter[j++] = delimiter[i++];
+	}
+    if(single_quote || double_quote)
     {
-        if (str[i] == '\'' && !in_double)
-        {
-            in_single = !in_single; // Cambia de estado
-            i++; // Salta la comilla, no la copies
-            continue;
-        }
-        if (str[i] == '"' && !in_single)
-        {
-            in_double = !in_double; // Cambia de estado
-            i++; // Salta la comilla, no la copies
-            continue;
-        }
-        new_str[j++] = str[i++]; // Copia el carácter
+        free(new_delimiter);
+        return NULL;
     }
-    new_str[j] = '\0';
-    free(str); // Libera la cadena original
-    return (new_str);
+	new_delimiter[j] = '\0';
+	return new_delimiter;
 }
+
 
 void remove_quotes_from_list(t_token *token_list)
 {

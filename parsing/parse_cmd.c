@@ -80,14 +80,13 @@ static void handle_infile(t_cmd *new_cmd, t_token *current_token)
 	new_cmd->infile = temp_infile;
 	ft_strcpy(new_cmd->infile, current_token->next->str);
 }
+
 // cat << EOF --> Im going to do the implementations using pipes
-static void handle_heredoc(t_cmd *new_cmd, t_token *current) 
+static void handle_heredoc(t_cmd *new_cmd, char *delimiter, int expansion, t_env **env, int last_exit_status) 
 {
-	char *delimiter; //the word we need to write to stop the process
 	char *line;
 	int pipe_fd[2]; //array of 2 integers. pipe function expect two file descriptor numbers
 
-	delimiter = current->next->str; // delimiter is actually the next token after <<
 	if(pipe(pipe_fd) == -1) //pipe function create a pair of file descriptors (reading / writing)
 	{
 		perror("pipe error");
@@ -102,6 +101,8 @@ static void handle_heredoc(t_cmd *new_cmd, t_token *current)
                 free(line);
             break;
         }
+		if(expansion)
+			line = expand_variables(line, env, last_exit_status);
 		write(pipe_fd[1], line, ft_strlen(line)); //writing 
 		write(pipe_fd[1], "\n", 1);
         free(line);
@@ -113,6 +114,8 @@ static void handle_heredoc(t_cmd *new_cmd, t_token *current)
         free(new_cmd->infile);
         new_cmd->infile = NULL;
     }
+	if(new_cmd->heredoc_fd != -1)
+		close(new_cmd->heredoc_fd); //only the last heredoc file counts
 	new_cmd->heredoc_fd = pipe_fd[0]; //reading for the parsing part
 }
 
@@ -138,17 +141,20 @@ static void handle_outfile(t_cmd *new_cmd, t_token *current_token, int append)
 }	
 
 //Finish the redirections Israel I have given you the foundations for it you're welcome
-t_cmd *parse_tokens_to_cmds(t_token *token_list)
+t_cmd *parse_tokens_to_cmds(t_token *token_list, t_env **env, int last_exit_status)
 {
     t_cmd *cmd_list;
     t_cmd *new_cmd;
     t_token *current;
     int argc;
+	char *delimiter;
+	int expansion;
 
 	cmd_list = NULL;
 	new_cmd = ft_lstnew();
 	current = token_list;
 	argc = 0;
+	expansion = 1;
 	if(!new_cmd)
 		return NULL;
     while (current)
@@ -180,7 +186,16 @@ t_cmd *parse_tokens_to_cmds(t_token *token_list)
         }
 		else if(current->type == TOKEN_HEREDOC)
 		{
-			handle_heredoc(new_cmd, current);
+			if(ft_strchr(current->next->str, '\'') || ft_strchr(current->next->str, '"'))
+				expansion = 0;
+			delimiter = clean_quotes_from_str(current->next->str);
+			if(!delimiter)
+			{
+				printf("synxtax error, unclosed delimiter");
+				return NULL;
+			}
+			handle_heredoc(new_cmd, delimiter, expansion, env, last_exit_status);
+			free(delimiter);
 			current = current->next; //skip delimiter
 		}
         current = current->next;
