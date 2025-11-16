@@ -104,5 +104,9 @@ int executor(t_cmd *cmd_list, t_env *my_env);
 char *find_cmd_path(char *cmd, t_env *my_env);
 
 
+//redirections
+void handle_redirections(t_cmd *cmd);
+void reset_redirections(void);
+
 #endif
 

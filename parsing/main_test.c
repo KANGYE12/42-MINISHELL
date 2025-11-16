@@ -47,14 +47,14 @@ int main(int argc, char **argv, char **envp)
         replace_tokens_variables(token_list, &env_list, last_exit_status);
         remove_quotes_from_list(token_list);
 
-        // Print token list
-        printf("\nToken list:\n");
-        t_token *tmp = token_list;
+        // Print tokens for testing
+        /*t_token *tmp = token_list;
+        printf("Token list:\n");
         while (tmp)
         {
             printf("  [%s]\n", tmp->str);
             tmp = tmp->next;
-        }
+        }*/
 
         // Check syntax
         if (check_syntax_tokens(token_list) == SYNTAX_ERROR)
@@ -67,10 +67,10 @@ int main(int argc, char **argv, char **envp)
             // Convert tokens into commands
             cmd_list = parse_tokens_to_cmds(token_list, &env_list, last_exit_status);
 
-            // Print command distribution
-            printf("\nCommands distribution:\n");
-            t_cmd *c = cmd_list;
-            int cmd_index = 0;
+            // Print command list for testing
+            /*t_cmd *c = cmd_list;
+            int i = 0;
+            printf("\nCommands generated:\n");
             while (c)
             {
                 printf("Command %d:\n", cmd_index);
@@ -84,9 +84,8 @@ int main(int argc, char **argv, char **envp)
                 if (c->outfile)
                     printf("  outfile: [%s] (append=%d)\n", c->outfile, c->append);
                 c = c->next;
-                cmd_index++;
-            }
-
+                i++;
+            }*/
             // Execute commands
             last_exit_status = executor(cmd_list, env_list);
 

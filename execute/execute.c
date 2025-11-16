@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kanye <kanye@student.42.fr>                +#+  +:+       +#+        */
+/*   By: iisraa11 <iisraa11@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 10:58:49 by iisraa11          #+#    #+#             */
-/*   Updated: 2025/11/14 17:34:55 by kanye            ###   ########.fr       */
+/*   Updated: 2025/11/17 00:14:00 by iisraa11         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,10 +73,11 @@ static int exec_single(t_cmd *cmd, t_env *my_env)
         if (!path)
         {
             printf("minishell: command not found: %s\n", cmd->argv[0]);
-            free_double_ptr(envp_array); 
-            exit(127); //command not found number
-        }    
-        execve(path, cmd->argv, envp_array); //the c command that execute the actual code. If it is a success the remaining code will not be run
+            exit(1);
+        }
+        if (cmd->infile || cmd->outfile)
+            handle_redirections(cmd);
+        execve(path, cmd->argv, my_env);
         perror("execve");
         free(path);
         free_double_ptr(envp_array);
