@@ -15,7 +15,7 @@ int main(int argc, char **argv, char **envp)
     // Initialize environment list
     env_list = init_env_list(envp);
 
-    // Optional: print all environment variables (debug)
+    /* Optional: print all environment variables (debug)
     printf("Environment variables:\n");
     t_env *tmp_env = env_list;
     while (tmp_env)
@@ -23,7 +23,7 @@ int main(int argc, char **argv, char **envp)
         printf("  %s=%s\n", tmp_env->key, tmp_env->value);
         tmp_env = tmp_env->next;
     }
-    printf("---------------------------------\n");
+    printf("---------------------------------\n");*/
 
     // Main shell loop
     while (1)

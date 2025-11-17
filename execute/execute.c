@@ -6,7 +6,7 @@
 /*   By: iisraa11 <iisraa11@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 10:58:49 by iisraa11          #+#    #+#             */
-/*   Updated: 2025/11/17 00:14:00 by iisraa11         ###   ########.fr       */
+/*   Updated: 2025/11/17 00:20:20 by iisraa11         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ static int exec_single(t_cmd *cmd, t_env *my_env)
         }
         if (cmd->infile || cmd->outfile)
             handle_redirections(cmd);
-        execve(path, cmd->argv, my_env);
+        execve(path, cmd->argv, envp_array);
         perror("execve");
         free(path);
         free_double_ptr(envp_array);
