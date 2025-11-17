@@ -6,7 +6,7 @@
 /*   By: iisraa11 <iisraa11@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 10:58:49 by iisraa11          #+#    #+#             */
-/*   Updated: 2025/11/17 00:20:20 by iisraa11         ###   ########.fr       */
+/*   Updated: 2025/11/17 01:34:24 by iisraa11         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ char **env_list_to_array(t_env *env_list)
 }
 
 //must to be modified to free all later
-static int exec_single(t_cmd *cmd, t_env *my_env)
+/*static int exec_single(t_cmd *cmd, t_env *my_env)
 {
     pid_t   pid;
     char    **envp_array;
@@ -92,16 +92,62 @@ static int exec_single(t_cmd *cmd, t_env *my_env)
             exit_code = 128 + WTERMSIG(status);
     }
     return (exit_code); 
+}*/
+
+static void child_proccess(t_cmd *cmd, t_env *my_env, int prev_fd, int pipe_fd[2])
+{
+    char **envp_array;
+    char *path;
+
+    envp_array = env_list_to_array(my_env);
+    if (prev_fd != -1)
+    {
+        dup2(prev_fd, STDIN_FILENO);
+        close(prev_fd);
+    }
+    if (cmd->next)
+    {
+        close(pipe_fd[0]);
+        dup2(pipe_fd[1], STDOUT_FILENO);
+        close(pipe_fd[1]);
+    }
+    path = find_cmd_path(cmd->argv[0], my_env);
+    if (!path)
+    {
+        printf("minishell: command not found: %s\n", cmd->argv[0]);
+        exit(1);
+    }
+    if (cmd->infile || cmd->outfile)
+        handle_redirections(cmd);
+    execve(path, cmd->argv, envp_array);
+    exit(1);
 }
 
 int executor(t_cmd *cmd_list, t_env *my_env)
 {
-    int last_exit_status;
+    t_cmd *cmd;
+    int prev_fd;
+    int pipe_fd[2];
+    pid_t pid;
 
-    last_exit_status = 0;
-    if (!cmd_list)
-        return (0);
-    if (cmd_list->next == NULL) 
-        last_exit_status = exec_single(cmd_list, my_env);
-    return (last_exit_status);
+    cmd = cmd_list;
+    prev_fd = -1;
+    while (cmd)
+    {
+        if (cmd->next)
+            pipe(pipe_fd);
+        pid = fork();
+        if (pid == 0)
+            child_proccess(cmd, my_env, prev_fd, pipe_fd);
+        if (prev_fd != -1)
+            close(prev_fd);
+        if (cmd->next)
+        {
+            close(pipe_fd[1]);
+            prev_fd = pipe_fd[0];
+        }
+        cmd = cmd->next;
+    }
+    while (wait(NULL) > 0);
+    return (0);
 }
