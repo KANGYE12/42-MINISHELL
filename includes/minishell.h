@@ -19,7 +19,7 @@
 # define SYNTAX_ERROR 1
 # define UNKNOWN_COMMAND 1
 
-int g_signal_status = 0;
+extern int g_signal_status;
 
 //A simple enum to differentiate each of the token types
 typedef enum e_token_type {

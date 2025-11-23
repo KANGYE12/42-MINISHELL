@@ -2,6 +2,7 @@
 #include <signal.h> // Necessary for mandatory signals
 
 
+int    g_signal_status = 0;
 int main(int argc, char **argv, char **envp)
 {
     t_token *token_list;
@@ -28,8 +29,8 @@ int main(int argc, char **argv, char **envp)
     printf("---------------------------------\n");
 
     // --- MANDATORY SIGNAL SETUP ---
-    signal(SIGINT, handle_sigint);
-    signal(SIGQUIT, SIG_IGN);
+    signal(SIGINT, handle_sigint); //when press control+c instead of killing program call this function
+    signal(SIGQUIT, SIG_IGN); //ignore control+'\' 
 
     // Main shell loop
     while (1)
