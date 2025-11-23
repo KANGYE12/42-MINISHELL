@@ -1,19 +1,6 @@
 #include "../includes/minishell.h"
-#include <signal.h> // Required for signal handling
+#include <signal.h> // Necessary for mandatory signals
 
-// MANDATORY: Global variable for signals
-int g_signal_status = 0;
-
-// Signal Handler for Ctrl-C (SIGINT)
-void handle_sigint(int sig)
-{
-    (void)sig;
-    write(1, "\n", 1);
-    rl_on_new_line();
-    rl_replace_line("", 0);
-    rl_redisplay();
-    g_signal_status = 130; // Update global status
-}
 
 int main(int argc, char **argv, char **envp)
 {
@@ -30,7 +17,7 @@ int main(int argc, char **argv, char **envp)
     // Initialize environment list
     env_list = init_env_list(envp);
 
-    // Optional: print all environment variables (debug) - KEPT AS REQUESTED
+    // --- ORIGINAL DEBUG PRINT (RESTORED) ---
     printf("Environment variables:\n");
     t_env *tmp_env = env_list;
     while (tmp_env)
@@ -41,13 +28,13 @@ int main(int argc, char **argv, char **envp)
     printf("---------------------------------\n");
 
     // --- MANDATORY SIGNAL SETUP ---
-    signal(SIGINT, handle_sigint);   // Handle Ctrl-C
-    signal(SIGQUIT, SIG_IGN);        // Ignore Ctrl-\ (Quit)
+    signal(SIGINT, handle_sigint);
+    signal(SIGQUIT, SIG_IGN);
 
     // Main shell loop
     while (1)
     {
-        // Check if a signal updated the status during the previous loop/readline
+        // Check signal status
         if (g_signal_status != 0)
         {
             last_exit_status = g_signal_status;
@@ -59,11 +46,20 @@ int main(int argc, char **argv, char **envp)
 
         if (!line)
         {
-            // Ctrl+D handling: Must print to STDERR (fd 2)
+            // FIX: Print exit to STDERR to pass tests
             if (isatty(STDIN_FILENO))
-                ft_putstr_fd("exit\n", 2); 
+                ft_putstr_fd("exit\n", 2);
             break;
         }
+
+        // --- CRITICAL FIX: PREVENT CRASH ON EMPTY LINE ---
+        // Without this, pressing Enter creates a command with NULL argv and crashes executor
+        if (line[0] == '\0')
+        {
+            free(line);
+            continue;
+        }
+        // -------------------------------------------------
 
         // --- Parsing ---
         classify_tokens(token_list);
@@ -71,7 +67,7 @@ int main(int argc, char **argv, char **envp)
         replace_tokens_variables(token_list, &env_list, last_exit_status);
         remove_quotes_from_list(token_list);
 
-        // Print token list (debug) - KEPT AS REQUESTED
+        // --- ORIGINAL DEBUG PRINT (RESTORED) ---
         printf("\nToken list:\n");
         t_token *tmp = token_list;
         while (tmp)
@@ -83,7 +79,7 @@ int main(int argc, char **argv, char **envp)
         // Check syntax
         if (check_syntax_tokens(token_list) == SYNTAX_ERROR)
         {
-            // Error message must go to STDERR (fd 2)
+            // FIX: Error message to STDERR
             error_message("syntax error near unexpected token", token_list);
             last_exit_status = 2;
         }
@@ -92,7 +88,7 @@ int main(int argc, char **argv, char **envp)
             // Convert tokens into commands
             cmd_list = parse_tokens_to_cmds(token_list, &env_list, last_exit_status);
 
-            // Print command distribution (debug) - KEPT AS REQUESTED
+            // --- ORIGINAL DEBUG PRINT (RESTORED) ---
             printf("\nCommands distribution:\n");
             t_cmd *c = cmd_list;
             int cmd_index = 0;
@@ -112,9 +108,11 @@ int main(int argc, char **argv, char **envp)
                 cmd_index++;
             }
 
-            // Execute commands - KEPT AS REQUESTED
+            // Execute commands
             if (cmd_list)
+            {
                 last_exit_status = executor(cmd_list, env_list);
+            }
 
             // Free command list
             free_cmd_list(&cmd_list);
@@ -128,5 +126,5 @@ int main(int argc, char **argv, char **envp)
     // Free environment list
     free_env(&env_list);
 
-    return last_exit_status;
+    return last_exit_status; 
 }

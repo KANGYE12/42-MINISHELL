@@ -19,6 +19,8 @@
 # define SYNTAX_ERROR 1
 # define UNKNOWN_COMMAND 1
 
+int g_signal_status = 0;
+
 //A simple enum to differentiate each of the token types
 typedef enum e_token_type {
     TOKEN_WORD,       //e.g. echo, hello, world --> For the execution part are you hearing me Israel
@@ -90,7 +92,7 @@ void free_double_ptr(char **ptr);
 int is_delimiter(char c);
 int is_var_char(char c);
 char *clean_quotes_from_str(char *delimiter);
-
+void handle_sigint(int sig);
 void remove_quotes_from_list(t_token *token_list);
 
 
