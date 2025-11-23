@@ -7,10 +7,11 @@ char *reading_line(t_token **token_list)
     char *line;
 
     line = readline("minishell> ");//Display the prompt "minishell> " in the terminal and waits a user to press enter to store it(must be a loop)
-    if(line && *line)
-        add_history(line); //Add the command line to the history. In this way it using the arrows we can get the previous commands
-	else
-		return NULL;	
+	if(!line)
+		return NULL;
+	if(line[0] == '\0')
+		return line;
+	add_history(line);		
     receive_line(line, token_list);
 	return line;
 }

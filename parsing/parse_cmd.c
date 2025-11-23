@@ -38,27 +38,32 @@ static void	ft_lstadd_back(t_cmd **lst, t_cmd *new)
 static void add_to_argv(t_cmd *new_cmd, char *str, int *args)
 {
 	char **temp_argv;
-	char *temp_str;
-	size_t len;
-	
-	temp_argv = realloc(new_cmd->argv, sizeof(char *)*(*args + 2)); // + 2 since we need to realloc the new string and the NULL args
+	int i;
+
+	i = 0;
+	temp_argv = malloc(sizeof(char *) * (*args + 2)); // + 2 since we need to realloc the new string and the NULL args
 	if(!temp_argv)
 	{
 		perror("ERROR IN REALLOC");
 		return ;
 	}
-	len = ft_strlen(str);
-	temp_str = malloc(sizeof(char)*(len + 1));
-	if(!temp_str)
+	while(i < *args)
 	{
-		perror("ERROR IN MALLOC ADD_TO_ARGV");
-		return ;
+		temp_argv[i] = new_cmd->argv[i];
+		i++;
 	}
+	temp_argv[i] = ft_strdup(str);
+	if (!temp_argv[i])
+    {
+        perror("minishell: malloc");
+        free(temp_argv);
+        return ;
+    }
+	temp_argv[i + 1] = NULL;
+	if(new_cmd->argv)
+		free(new_cmd->argv);
 	new_cmd->argv = temp_argv;
-	new_cmd->argv[*args] = temp_str;
-	ft_strcpy(new_cmd->argv[*args], str);
 	(*args)++;
-	new_cmd->argv[*args] = NULL;
 }
 
 static void handle_infile(t_cmd *new_cmd, t_token *current_token)
@@ -191,14 +196,17 @@ t_cmd *parse_tokens_to_cmds(t_token *token_list, t_env **env, int last_exit_stat
 			delimiter = clean_quotes_from_str(current->next->str);
 			if(!delimiter)
 			{
-				printf("synxtax error, unclosed delimiter");
+				ft_putstr_fd("minishell: syntax error: unclosed delimiter\n", 2);
+				free_cmd_list(&cmd_list);
+				free_cmd_list(&new_cmd);
 				return NULL;
 			}
 			handle_heredoc(new_cmd, delimiter, expansion, env, last_exit_status);
 			free(delimiter);
 			current = current->next; //skip delimiter
 		}
-        current = current->next;
+		if(current)
+        	current = current->next;
     }
 	ft_lstadd_back(&cmd_list, new_cmd);
     return cmd_list;

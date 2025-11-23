@@ -44,7 +44,7 @@ char *expand_variables(char *str, t_env **env, int last_exit_status)
             single_quote = !single_quote;
         else if (str[i] == '"' && !single_quote)
             double_quote = !double_quote;
-        if (str[i] == '$' && !single_quote) //since only double quotes or no quote allows expansion
+        if (str[i] == '$' && !single_quote && str[i-1] != '\\') //since only double quotes or no quote allows expansion
         {
             char *temporal = ft_substr(str, start, i - start);
             result = ft_strjoin_free_s1(result, temporal);

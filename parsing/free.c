@@ -1,10 +1,14 @@
 #include "../includes/minishell.h"
 
 
-void	error_message(char *message, t_token *token_list)
+void    error_message(char *message, t_token *token_list)
 {
-	printf("%s\n", message);
-	free_token_list(&token_list);
+    ft_putstr_fd("minishell: ", 2);
+    ft_putstr_fd(message, 2);
+    ft_putstr_fd("\n", 2); 
+    
+    if (token_list)
+        free_token_list(&token_list);
 }
 
 void free_token_list(t_token **token_list)
@@ -29,26 +33,30 @@ void free_cmd_list(t_cmd **cmd_list)
     t_cmd *temporal;
     int i;
 
-    i = 0;
+    if (!cmd_list || !*cmd_list)
+        return;
     current = *cmd_list;
-    while(current != NULL)
+    while (current != NULL)
     {
+        i = 0;
         temporal = current->next;
-        if(current->argv)  
+        if (current->argv)
         {
-            while(current->argv[i] != NULL)
+            while (current->argv[i] != NULL)
             {
                 free(current->argv[i]);
                 i++;
             }
-            free(current->argv);    
+            free(current->argv);
         }
-        if(current->infile)
+        if (current->infile)
             free(current->infile);
-        if(current->outfile)
+        if (current->outfile)
             free(current->outfile);
-        free(current);    
-        current = temporal;        
+        if (current->heredoc_fd != -1)
+            close(current->heredoc_fd);
+        free(current);
+        current = temporal;
     }
-    cmd_list = NULL;
+    *cmd_list = NULL;
 }

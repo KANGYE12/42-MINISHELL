@@ -52,7 +52,7 @@ static t_token *extract_token_from_quote(char *line, int *i)
         (*i)++;
     if (line[*i] == '\0') 
     {
-        printf("minishell: syntax error: unclosed quote\n");
+        ft_putstr_fd("minishell: syntax error: unclosed quote\n", 2);
         return (NULL);
     }
     copy = ft_substr(line, start, (*i - start) + 1);
@@ -116,6 +116,11 @@ void    receive_line(char *line_read, t_token **token_list)
             new = extract_token_from_operator(line_read, &i);
         else //for the actual words that doesnt start from quote
             new = extract_token_from_word(line_read, &i);   
+        if(!new)
+        {
+            free_token_list(token_list);
+            return ;
+        }    
         ft_lstadd_back(token_list, new, has_space);
         has_space = 0;
         new = NULL;              
