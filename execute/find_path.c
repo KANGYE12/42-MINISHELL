@@ -3,15 +3,47 @@
 /*                                                        :::      ::::::::   */
 /*   find_path.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kanye <kanye@student.42.fr>                +#+  +:+       +#+        */
+/*   By: iisraa11 <iisraa11@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 13:14:18 by iisraa11          #+#    #+#             */
-/*   Updated: 2025/11/12 21:04:08 by kanye            ###   ########.fr       */
+/*   Updated: 2025/11/24 16:26:48 by iisraa11         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
+//Convert the linked list of environment variables into an array of strings in the format KEY=VALUE.
+char **env_list_to_array(t_env *env_list)
+{
+    t_env *current;
+    char **env_array;
+    char *temp_str;
+    int count;
+    int i;
+
+    count = 0;
+    i = 0;
+    current = env_list;
+    while (current)
+    {
+        count++;
+        current = current->next;
+    }
+    env_array = (char **)malloc(sizeof(char *) * (count + 1));
+    if (!env_array)
+        return (NULL);
+    current = env_list;
+    while (current)
+    {
+        temp_str = ft_strjoin(current->key, "=");
+        env_array[i] = ft_strjoin(temp_str, current->value);
+        free(temp_str);
+        current = current->next;
+        i++;
+    }
+    env_array[i] = NULL;
+    return (env_array);
+}
 
 //Find the full path of a command by searching the PATH environment variable.
 char *find_cmd_path(char *cmd, t_env *my_env)
