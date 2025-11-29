@@ -17,7 +17,7 @@ int main(int argc, char **argv, char **envp)
 
     // Initialize environment list
     env_list = init_env_list(envp);
-
+    /*
     // --- ORIGINAL DEBUG PRINT (RESTORED) ---
     printf("Environment variables:\n");
     t_env *tmp_env = env_list;
@@ -27,7 +27,7 @@ int main(int argc, char **argv, char **envp)
         tmp_env = tmp_env->next;
     }
     printf("---------------------------------\n");
-
+    */
     // --- MANDATORY SIGNAL SETUP ---
     signal(SIGINT, handle_sigint); //when press control+c instead of killing program call this function
     signal(SIGQUIT, SIG_IGN); //ignore control+'\' 
@@ -68,7 +68,7 @@ int main(int argc, char **argv, char **envp)
         replace_tokens_variables(token_list, &env_list, last_exit_status);
         remove_quotes_from_list(token_list);
 
-        // --- ORIGINAL DEBUG PRINT (RESTORED) ---
+    /* // --- ORIGINAL DEBUG PRINT (RESTORED) ---
         printf("\nToken list:\n");
         t_token *tmp = token_list;
         while (tmp)
@@ -76,6 +76,7 @@ int main(int argc, char **argv, char **envp)
             printf("  [%s]\n", tmp->str);
             tmp = tmp->next;
         }
+    */
 
         // Check syntax
         if (check_syntax_tokens(token_list) == SYNTAX_ERROR)
@@ -89,7 +90,7 @@ int main(int argc, char **argv, char **envp)
             // Convert tokens into commands
             cmd_list = parse_tokens_to_cmds(token_list, &env_list, last_exit_status);
 
-            // --- ORIGINAL DEBUG PRINT (RESTORED) ---
+           /* // --- ORIGINAL DEBUG PRINT (RESTORED) ---
             printf("\nCommands distribution:\n");
             t_cmd *c = cmd_list;
             int cmd_index = 0;
@@ -108,12 +109,10 @@ int main(int argc, char **argv, char **envp)
                 c = c->next;
                 cmd_index++;
             }
-
+            */
             // Execute commands
             if (cmd_list)
-            {
-                last_exit_status = executor(cmd_list, env_list);
-            }
+                last_exit_status = executor(cmd_list, &env_list);
 
             // Free command list
             free_cmd_list(&cmd_list);
