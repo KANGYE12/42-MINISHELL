@@ -94,17 +94,29 @@ int is_var_char(char c);
 char *clean_quotes_from_str(char *delimiter);
 void handle_sigint(int sig);
 void remove_quotes_from_list(t_token *token_list);
-
+int is_digit_str(char *str);
 
 //cmd command
 t_cmd *parse_tokens_to_cmds(t_token *token_list, t_env **env, int last_exit_status);
 
 //execute
-int executor(t_cmd *cmd_list, t_env *my_env);
+int executor(t_cmd *cmd_list, t_env **my_env);
 
 //path
 char *find_cmd_path(char *cmd, t_env *my_env);
 
+//builtins
+int exec_builtin(t_cmd *cmd, t_env **my_env, int in_parent);
+int builtin_cd(char **argv);
+int builtin_export(char **argv, t_env **env_list);
+int builtin_unset(char **argv, t_env **env_list);
+int builtin_env(t_env *env_list);
+int builtin_exit(char **argv);
+int builtin_echo(char **argv);
+int builtin_pwd(void);
+
+//redirections
+void handle_redirections(t_cmd *cmd);
 
 #endif
 
