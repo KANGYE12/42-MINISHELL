@@ -35,7 +35,7 @@ static void	ft_lstadd_back(t_cmd **lst, t_cmd *new)
 	temporal->next = new;
 }
 
-static void add_to_argv(t_cmd *new_cmd, char *str, int *args)
+/*static void add_to_argv(t_cmd *new_cmd, char *str, int *args)
 {
 	char **temp_argv;
 	int i;
@@ -64,9 +64,62 @@ static void add_to_argv(t_cmd *new_cmd, char *str, int *args)
 		free(new_cmd->argv);
 	new_cmd->argv = temp_argv;
 	(*args)++;
+}*/
+
+static int add_to_argv(t_cmd *new_cmd, char *str, int *args)
+{
+	char **temp_argv;
+	int i;
+
+	i = 0;
+	temp_argv = malloc(sizeof(char *) * (*args + 2)); // + 2 since we need to realloc the new string and the NULL args
+	if(!temp_argv)
+	{
+		perror("ERROR IN REALLOC");
+		return ERROR;
+	}
+	while(i < *args)
+	{
+		temp_argv[i] = new_cmd->argv[i];
+		i++;
+	}
+	temp_argv[i] = ft_strdup(str);
+	if (!temp_argv[i])
+    {
+        perror("minishell: malloc");
+        free(temp_argv);
+        return ERROR;
+    }
+	temp_argv[i + 1] = NULL;
+	if(new_cmd->argv)
+		free(new_cmd->argv);
+	new_cmd->argv = temp_argv;
+	(*args)++;
+	return SUCCESS;
 }
 
-static void handle_infile(t_cmd *new_cmd, t_token *current_token)
+static int handle_infile(t_cmd *new_cmd, t_token *current_token)
+{
+	//since we already checked that the next token is a word, then is not necesary check it again
+	//(I should create more checks in a close future)
+	char *temp_infile;
+	size_t len;
+
+	if(new_cmd->infile) //there is already data in the infile we need to overwrite it using free first
+		free(new_cmd->infile);
+	len = ft_strlen(current_token->next->str);
+	temp_infile = malloc(sizeof(char)*(len + 1));
+	if(!temp_infile)
+	{
+		perror("MALLOC OF HANDLE_INFILE IS NULL");
+		return ERROR;
+	}
+	new_cmd->infile = temp_infile;
+	ft_strcpy(new_cmd->infile, current_token->next->str);
+	return SUCCESS;
+}
+
+/*static void handle_infile(t_cmd *new_cmd, t_token *current_token)
 {
 	//since we already checked that the next token is a word, then is not necesary check it again
 	//(I should create more checks in a close future)
@@ -84,7 +137,7 @@ static void handle_infile(t_cmd *new_cmd, t_token *current_token)
 	}
 	new_cmd->infile = temp_infile;
 	ft_strcpy(new_cmd->infile, current_token->next->str);
-}
+}*/
 
 // cat << EOF --> Im going to do the implementations using pipes
 static void handle_heredoc(t_cmd *new_cmd, char *delimiter, int expansion, t_env **env, int last_exit_status) 
@@ -126,7 +179,7 @@ static void handle_heredoc(t_cmd *new_cmd, char *delimiter, int expansion, t_env
 
 
 //cat << EOF
-static void handle_outfile(t_cmd *new_cmd, t_token *current_token, int append)
+/*static void handle_outfile(t_cmd *new_cmd, t_token *current_token, int append)
 {
 	char *temp_outfile;
 	size_t len;
@@ -143,7 +196,27 @@ static void handle_outfile(t_cmd *new_cmd, t_token *current_token, int append)
 	new_cmd->outfile = temp_outfile;
 	ft_strcpy(new_cmd->outfile, current_token->next->str);
 	new_cmd->append = append;
-}	
+}*/
+
+static int handle_outfile(t_cmd *new_cmd, t_token *current_token, int append)
+{
+	char *temp_outfile;
+	size_t len;
+
+	if(new_cmd->outfile) //there is already data in the infile we need to overwrite it using free first
+		free(new_cmd->outfile);
+	len = ft_strlen(current_token->next->str);
+	temp_outfile = malloc(sizeof(char)*(len + 1));
+	if(!temp_outfile)
+	{
+		perror("MALLOC OF HANDLE_OUTFILE IS NULL");
+		return ERROR;
+	}
+	new_cmd->outfile = temp_outfile;
+	ft_strcpy(new_cmd->outfile, current_token->next->str);
+	new_cmd->append = append;
+	return SUCCESS;
+}
 
 //Finish the redirections Israel I have given you the foundations for it you're welcome
 t_cmd *parse_tokens_to_cmds(t_token *token_list, t_env **env, int last_exit_status)
