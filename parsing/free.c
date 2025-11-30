@@ -23,10 +23,8 @@ void    error_message(char *message, t_token *token_list)
 {
     ft_putstr_fd("minishell: ", 2);
     ft_putstr_fd(message, 2);
-    ft_putstr_fd("\n", 2); 
-    
-    if (token_list)
-        free_token_list(&token_list);
+    ft_putstr_fd("\n", 2);
+    (void)token_list;
 }
 
 void free_token_list(t_token **token_list)
