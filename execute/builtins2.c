@@ -6,7 +6,7 @@
 /*   By: iisraa11 <iisraa11@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 16:07:03 by iisraa11          #+#    #+#             */
-/*   Updated: 2025/11/24 16:42:27 by iisraa11         ###   ########.fr       */
+/*   Updated: 2025/11/30 18:40:18 by iisraa11         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int builtin_export(char **argv, t_env **env_list)
         }
 
         key_len = eq - argv[i];
-        key = strndup(argv[i], key_len);
+        key = ft_strndup(argv[i], key_len);
         value = ft_strdup(eq + 1);
 
         // buscar si ya existe
