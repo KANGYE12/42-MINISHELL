@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: kanye <kanye@student.42.fr>                +#+  +:+       +#+         #
+#    By: iisraa11 <iisraa11@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 18:41:05 by kanye             #+#    #+#              #
-#    Updated: 2025/11/09 21:28:17 by kanye            ###   ########.fr        #
+#    Updated: 2025/11/30 18:39:51 by iisraa11         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ SRCS			=	ft_isalnum.c ft_isprint.c ft_memcmp.c  ft_putchar_fd.c ft_split.c \
 					ft_strnstr.c ft_tolower.c ft_bzero.c   ft_isascii.c ft_memcpy.c \
 					ft_memmove.c ft_putnbr_fd.c  ft_strdup.c  ft_strlen.c  ft_strrchr.c \
 					ft_toupper.c ft_calloc.c  ft_isdigit.c ft_memchr.c  ft_memset.c  \
-					ft_putstr_fd.c  ft_strjoin.c ft_strmapi.c ft_strtrim.c ft_striteri.c ft_strcmp.c ft_strcpy.c
+					ft_putstr_fd.c  ft_strjoin.c ft_strmapi.c ft_strtrim.c ft_striteri.c ft_strcmp.c ft_strcpy.c ft_strndup.c
 OBJS			= $(SRCS:.c=.o) 
 
 BONUS			=	ft_lstadd_front_bonus.c ft_lstclear_bonus.c \
