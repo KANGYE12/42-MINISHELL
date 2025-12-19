@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iisraa11 <iisraa11@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isrguerr <isrguerr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:31:06 by iisraa11          #+#    #+#             */
-/*   Updated: 2025/11/29 12:34:11 by iisraa11         ###   ########.fr       */
+/*   Updated: 2025/12/19 12:51:00 by isrguerr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,26 @@ int builtin_pwd(void)
     return (0);
 }
 
+int check_echo_n(char *str)
+{
+    int i;
+    size_t counter;
+
+    if(str[0] == '-' && str[1] == 'n')
+    {
+        i = 1;
+        counter = 0;
+        while(str[i] && str[i] == 'n')
+        {
+            i++;
+            counter++;
+        }
+        if(counter == ft_strlen(str) - 1)    
+            return 1;
+    }    
+    return 0;
+}
+
 int builtin_echo(char **argv)
 {
     int i;
@@ -31,7 +51,7 @@ int builtin_echo(char **argv)
 
     i = 1;
     newline = 1;
-    if (argv[1] && ft_strcmp(argv[1], "-n") == 0)
+    if (argv[1] && check_echo_n(argv[1]) == 1)
     {
         newline = 0;
         i = 2;
@@ -69,13 +89,7 @@ int builtin_env(t_env *env_list)
 
 
 int builtin_exit(char **argv)
-{
-    if (!is_digit_str(argv[1]) && argv[1])
-    {
-        printf("minishell: exit: %s: numeric argument required\n", argv[1]);
-        exit(255);
-    }
-    
+{ 
     int status;
 
     status = 0;
