@@ -1,44 +1,53 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_tokens.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kanye <kanye@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/20 18:59:44 by kanye             #+#    #+#             */
+/*   Updated: 2025/12/20 19:07:32 by kanye            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-//This function is only used to store the tokens in a linked list that's all. It ignores completly the empty spaces
-char *reading_line(t_token **token_list)
+/* This function reads a line from the user and stores tokens in a linked list.
+   It ignores completely the empty spaces. */
+char	*reading_line(t_token **token_list)
 {
-    char *line;
+	char	*line;
 
-    line = readline("minishell> ");//Display the prompt "minishell> " in the terminal and waits a user to press enter to store it(must be a loop)
-	if(!line)
-		return NULL;
-	if(line[0] == '\0')
-		return line;
-	add_history(line);		
-    receive_line(line, token_list);
-	return line;
+	line = readline("minishell> ");
+	if (!line)
+		return (NULL);
+	if (line[0] == '\0')
+		return (line);
+	add_history(line);
+	receive_line(line, token_list);
+	return (line);
 }
 
-//Function to classify the different tokens types that can be passed as a argument
-
-void classify_tokens(t_token *token_list)
+/* Function to classify the different token types that can be passed as arguments */
+void	classify_tokens(t_token *token_list)
 {
-	t_token *current;
+	t_token	*current;
 
 	current = token_list;
-	while(current != NULL)
+	while (current != NULL)
 	{
-		if(ft_strcmp(current->str, "|") == 0)
+		if (ft_strcmp(current->str, "|") == 0)
 			current->type = TOKEN_PIPE;
-		else if(ft_strcmp(current->str, "<") == 0)
+		else if (ft_strcmp(current->str, "<") == 0)
 			current->type = TOKEN_REDIR_IN;
-		else if(ft_strcmp(current->str, ">") == 0)
+		else if (ft_strcmp(current->str, ">") == 0)
 			current->type = TOKEN_REDIR_OUT;
-		else if(ft_strcmp(current->str, ">>") == 0)
+		else if (ft_strcmp(current->str, ">>") == 0)
 			current->type = TOKEN_APPEND;
-		else if(ft_strcmp(current->str, "<<") == 0)
+		else if (ft_strcmp(current->str, "<<") == 0)
 			current->type = TOKEN_HEREDOC;
-		else if(ft_strcmp(current->str, "|") == 0)
-			current->type = TOKEN_PIPE;
-		else //For the remaing parts that are not considered as tokens
-			current->type = TOKEN_WORD;		
-		current = current->next;					
+		else
+			current->type = TOKEN_WORD;
+		current = current->next;
 	}
 }
