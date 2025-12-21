@@ -63,6 +63,24 @@ typedef struct s_env
     struct s_env    *next;
 } t_env;
 
+typedef struct s_heredoc
+{
+	int		fd;
+	char	*delimiter;
+	int		expansion;
+	t_env	**env;
+	int		last_exit_status;
+}	t_heredoc;
+
+//statest for a variable expansion
+typedef struct s_exp
+{
+	int			i;
+	int			start;
+	int			quotes[2];
+	t_env	**env;
+	int		last_exit_status;
+}	t_exp;
 
 //Enviroment code
 char    *get_env_value(t_env **env, char *key);
@@ -80,6 +98,31 @@ int is_operator_char(char c);
 int is_space(char c);
 void    receive_line(char *line_read, t_token **token_list);
 int	check_syntax_tokens(t_token *token_list);
+char	**resize_argv(char **old, int size);
+void	read_heredoc_input(t_heredoc *hdoc);
+t_cmd	*ft_lstnew_parse(void);
+void	ft_lstadd_back_parse(t_cmd **lst, t_cmd *new);
+
+
+
+void	handle_redirections_and_heredoc(t_cmd *cmd, t_token **current,
+		t_env **env, int last_exit_status);
+
+void	handle_pipe(t_cmd **cmd_list, t_cmd **new_cmd, int *argc);
+
+void	handle_heredoc(t_cmd *cmd, t_heredoc *hdoc);
+int	handle_infile(t_cmd *cmd, t_token *token);
+int	handle_outfile(t_cmd *cmd, t_token *token, int append);
+
+char	*ft_strjoin_free_s1(char *s1, char *s2);
+char	*get_var_name(const char *str, int *len);
+char	*dup_env_or_empty(const char *s);
+
+t_token	*extract_token_from_quote(char *line, int *i);
+t_token	*extract_token_from_operator(char *line, int *i);
+t_token	*extract_token_from_word(char *line, int *i);
+void	ft_lstadd_back_token(t_token **lst, t_token *new, int has_space);
+t_token	*ft_lstnew_token(char *str);
 
 //special token cases
 void merge_adjacent_words(t_token **token_list);

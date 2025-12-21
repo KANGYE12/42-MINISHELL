@@ -6,7 +6,7 @@
 /*   By: kanye <kanye@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 18:59:35 by kanye             #+#    #+#             */
-/*   Updated: 2025/12/20 19:05:23 by kanye            ###   ########.fr       */
+/*   Updated: 2025/12/21 17:03:20 by kanye            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,16 @@ void	free_token_list(t_token **token_list)
 	*token_list = NULL;
 }
 
+static void	free_helper(t_cmd *current)
+{
+	if (current->infile)
+		free(current->infile);
+	if (current->outfile)
+		free(current->outfile);
+	if (current->heredoc_fd != -1)
+		close(current->heredoc_fd);
+}
+
 void	free_cmd_list(t_cmd **cmd_list)
 {
 	t_cmd	*current;
@@ -76,12 +86,7 @@ void	free_cmd_list(t_cmd **cmd_list)
 			}
 			free(current->argv);
 		}
-		if (current->infile)
-			free(current->infile);
-		if (current->outfile)
-			free(current->outfile);
-		if (current->heredoc_fd != -1)
-			close(current->heredoc_fd);
+		free_helper(current);
 		free(current);
 		current = temp;
 	}

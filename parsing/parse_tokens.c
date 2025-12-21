@@ -6,7 +6,7 @@
 /*   By: kanye <kanye@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 18:59:44 by kanye             #+#    #+#             */
-/*   Updated: 2025/12/20 19:07:32 by kanye            ###   ########.fr       */
+/*   Updated: 2025/12/21 17:50:21 by kanye            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ char	*reading_line(t_token **token_list)
 	return (line);
 }
 
-/* Function to classify the different token types that can be passed as arguments */
+/* Function to classify the different token 
+types that can be passed as arguments */
 void	classify_tokens(t_token *token_list)
 {
 	t_token	*current;

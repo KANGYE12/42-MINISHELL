@@ -6,62 +6,50 @@
 /*   By: kanye <kanye@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 18:59:54 by kanye             #+#    #+#             */
-/*   Updated: 2025/12/20 19:26:21 by kanye            ###   ########.fr       */
+/*   Updated: 2025/12/21 17:48:23 by kanye            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-
-int is_space(char c)
+int	is_space(char c)
 {
-    if (c == ' ' || c == '\t' || c == '\n'
-        || c == '\v' || c == '\f' || c == '\r')
-        return 1;
-    return 0;
-}    
-
-
-int is_operator_char(char c)
-{
-    if (c == '|' || c == '<' || c == '>')
-        return 1;
-    return 0;    
+	if (c == ' ' || c == '\t' || c == '\n'
+		|| c == '\v' || c == '\f' || c == '\r')
+		return (1);
+	return (0);
 }
 
-int is_delimiter(char c)
+int	is_operator_char(char c)
 {
-    if (is_space(c) || is_operator_char(c) || c == '\'' || c == '"')
-        return (1);
-    return (0);
+	if (c == '|' || c == '<' || c == '>')
+		return (1);
+	return (0);
 }
 
-void free_double_ptr(char **ptr)
+int	is_delimiter(char c)
 {
-    int i;
-
-    i = 0;
-    while (ptr[i])
-    {
-        free(ptr[i]);
-        i++;
-    }
-    free(ptr);
+	if (is_space(c) || is_operator_char(c) || c == '\'' || c == '"')
+		return (1);
+	return (0);
 }
 
-int is_var_char(char c)
+void	free_double_ptr(char **ptr)
 {
-    if(ft_isalnum(c) || c == '_')
-        return 1;
-    return 0;    
+	int	i;
+
+	i = 0;
+	while (ptr[i])
+	{
+		free(ptr[i]);
+		i++;
+	}
+	free(ptr);
 }
 
-void handle_sigint(int sig)
+int	is_var_char(char c)
 {
-    (void)sig;
-    write(1, "\n", 1);
-    rl_on_new_line();
-    rl_replace_line("", 0);
-    rl_redisplay();
-    g_signal_status = 130;
+	if (ft_isalnum(c) || c == '_')
+		return (1);
+	return (0);
 }

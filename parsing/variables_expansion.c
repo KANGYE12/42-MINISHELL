@@ -6,111 +6,91 @@
 /*   By: kanye <kanye@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 18:59:58 by kanye             #+#    #+#             */
-/*   Updated: 2025/12/20 19:09:23 by kanye            ###   ########.fr       */
+/*   Updated: 2025/12/21 20:31:55 by kanye            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-static char	*ft_strjoin_free_s1(char *s1, char *s2)
+static char	*expand_dollar(char *str, int *i, t_env **env, int last_exit_status)
 {
-	char	*new_str;
+	char	*value;
+	int		var_len;
+	char	*var_name;
 
-	if (s2 == NULL)
-		new_str = ft_strjoin(s1, "");
+	if (str[*i] == '?')
+	{
+		value = ft_itoa(last_exit_status);
+		(*i)++;
+	}
+	else if (ft_isalpha(str[*i]) || str[*i] == '_')
+	{
+		var_name = get_var_name(&str[*i], &var_len);
+		value = dup_env_or_empty(get_env_value(env, var_name));
+		free(var_name);
+		(*i) += var_len;
+	}
 	else
-		new_str = ft_strjoin(s1, s2);
-	free(s1);
-	return (new_str);
+	{
+		value = ft_strdup("$");
+		(*i)++;
+	}
+	return (value);
 }
 
-static char	*get_var_name(const char *str, int *len)
+static void	handle_quotes(char c, int *single_quote, int *double_quote)
 {
-	int	i;
+	if (c == '\'' && !*double_quote)
+		*single_quote = !*single_quote;
+	else if (c == '"' && !*single_quote)
+		*double_quote = !*double_quote;
+}
 
-	i = 0;
-	while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
-		i++;
-	*len = i;
-	return (ft_substr(str, 0, i));
+static char	*append_chunk(char *result, char *str, int start, int end)
+{
+	char	*chunk;
+	char	*new_result;
+
+	chunk = ft_substr(str, start, end - start);
+	new_result = ft_strjoin_free_s1(result, chunk);
+	free(chunk);
+	return (new_result);
+}
+
+static void	append_expanded(char **res, char *str, int start, t_exp *e)
+{
+	char	*val;
+
+	*res = append_chunk(*res, str, start, e->i++);
+	val = expand_dollar(str, &e->i, e->env, e->last_exit_status);
+	*res = ft_strjoin_free_s1(*res, val);
+	free(val);
 }
 
 char	*expand_variables(char *str, t_env **env, int last_exit_status)
 {
-	char	*result;
-	int		i;
-	int		start;
-	int		single_quote;
-	int		double_quote;
+	char	*res;
+	t_exp	e;
 
-	i = 0;
-	single_quote = 0;
-	double_quote = 0;
-	start = 0;
-	result = ft_strdup("");
-	while (str[i])
+	res = ft_strdup("");
+	e.i = 0;
+	e.start = 0;
+	e.quotes[0] = 0;
+	e.quotes[1] = 0;
+	e.env = env;
+	e.last_exit_status = last_exit_status;
+	while (str[e.i])
 	{
-		if (str[i] == '\'' && !double_quote)
-			single_quote = !single_quote;
-		else if (str[i] == '"' && !single_quote)
-			double_quote = !double_quote;
-		if (str[i] == '$' && !single_quote && (i == 0 || str[i - 1] != '\\'))
+		handle_quotes(str[e.i], &e.quotes[0], &e.quotes[1]);
+		if (str[e.i] == '$' && !e.quotes[0]
+			&& (e.i == 0 || str[e.i - 1] != '\\'))
 		{
-			char	*temporal;
-
-			temporal = ft_substr(str, start, i - start);
-			result = ft_strjoin_free_s1(result, temporal);
-			free(temporal);
-			i++;
-			if (str[i] == '?')
-			{
-				char	*status;
-
-				status = ft_itoa(last_exit_status);
-				result = ft_strjoin_free_s1(result, status);
-				free(status);
-				i++;
-			}
-			else if (ft_isalpha(str[i]) || str[i] == '_')
-			{
-				int		var_len;
-				char	*var_name;
-				char	*value;
-
-				var_name = get_var_name(&str[i], &var_len);
-				value = get_env_value(env, var_name);
-				result = ft_strjoin_free_s1(result, value);
-				free(var_name);
-				i += var_len;
-			}
-			else
-				result = ft_strjoin_free_s1(result, "$");
-			start = i;
+			append_expanded(&res, str, e.start, &e);
+			e.start = e.i--;
 		}
-		else
-			i++;
+		e.i++;
 	}
-	{
-		char	*last_chunk;
-
-		last_chunk = ft_substr(str, start, i - start);
-		result = ft_strjoin_free_s1(result, last_chunk);
-		free(last_chunk);
-	}
+	res = append_chunk(res, str, e.start, e.i);
 	free(str);
-	return (result);
-}
-
-void	replace_tokens_variables(t_token *token_list, t_env **env,
-			int last_exit_status)
-{
-	t_token	*current;
-
-	current = token_list;
-	while (current)
-	{
-		if (current->type == TOKEN_WORD)
-			current->str = expand_variables(current->str, env, last_exit_status);
-		current = current->next;
-	}
+	return (res);
 }
