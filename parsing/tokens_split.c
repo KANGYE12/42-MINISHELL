@@ -1,10 +1,19 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokens_split.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kanye <kanye@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/20 18:59:52 by kanye             #+#    #+#             */
+/*   Updated: 2025/12/21 18:54:28 by kanye            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-
-//We are just creating the token whiout linking it with anything
-static t_token	*ft_lstnew(char *str)
+/* Create a new token without linking it */
+t_token	*ft_lstnew_token(char *str)
 {
 	t_token	*new_list;
 
@@ -13,18 +22,18 @@ static t_token	*ft_lstnew(char *str)
 		return (NULL);
 	new_list->str = str;
 	new_list->next = NULL;
-    new_list->prev = NULL;
+	new_list->prev = NULL;
 	return (new_list);
 }
 
-//Linking each part of the token in the list of tokens
-static void	ft_lstadd_back(t_token **lst, t_token *new)
+/* Add a token at the end of the list, with optional space flag */
+void	ft_lstadd_back_token(t_token **lst, t_token *new, int has_space)
 {
 	t_token	*temporal;
 
 	if (!lst || !new)
 		return ;
-	if (*lst == NULL) //If the list starts as NULL. The token is both head and tail of the list
+	if (*lst == NULL)
 	{
 		*lst = new;
 		return ;
@@ -33,78 +42,53 @@ static void	ft_lstadd_back(t_token **lst, t_token *new)
 	while (temporal->next != NULL)
 		temporal = temporal->next;
 	temporal->next = new;
-    new->prev = temporal;
+	new->prev = temporal;
+	new->has_space = has_space;
 }
 
-//Take into account the tha token is the new message copy from line ultil quote
-static t_token *extract_token_from_quote(char *line, int *i)
+/* Split the input line into tokens, handling quotes, operators, and words */
+static t_token	*extract_next_token(char *line, int *i)
 {
-    char *copy;
-    int start;
-    char quote;
-
-    quote = line[*i];
-    start = ++(*i); //Increment before read since we dont want to add the quote
-    while(line[*i]!= '\0' && line[*i] != quote)
-       (*i)++;
-    copy = ft_substr(line, start, *i - start);    
-    if(line[*i] == quote) //Skip the last quote
-        (*i)++;
-    return (ft_lstnew(copy));
+	if (line[*i] == '\'' || line[*i] == '"')
+		return (extract_token_from_quote(line, i));
+	else if (is_operator_char(line[*i]))
+		return (extract_token_from_operator(line, i));
+	else
+		return (extract_token_from_word(line, i));
 }
 
-//In case > or < are put together
-static t_token *extract_token_from_operator(char *line, int *i)
+static void	skip_spaces(char *line, int *i, int *has_space)
 {
-    char    *copy;
-
-    if ((line[*i] == '<' && line[*i + 1] == '<') || (line[*i] == '>' && line[*i + 1] == '>')) //Append or herodic found
-    {
-        copy = ft_substr(line, *i, 2); //copy 2 char from start i
-        (*i)+=2; //Since it is a double operator form
-        return ft_lstnew(copy);
-    }
-    else
-    {
-        copy = ft_substr(line, *i, 1);
-        (*i)++;
-        return ft_lstnew(copy);
-    }
+	if (is_space(line[*i]))
+	{
+		*has_space = 1;
+		while (is_space(line[*i]))
+			(*i)++;
+	}
 }
 
-static t_token *extract_token_from_word(char *line, int *i)
+void	receive_line(char *line_read, t_token **token_list)
 {
-    int start;
-    char *copy;
+	int		i;
+	t_token	*new;
+	int		has_space;
 
-    start = *i;
-    while(!is_space(line[*i]) && !is_operator_char(line[*i]) && line[*i] != '\0')
-        (*i)++;
-    copy = ft_substr(line, start, *i - start);
-    return ft_lstnew(copy);
-}
-
-//Is necessary this kind of implementation in this cases --> "echo>grep c" where a simple split cannot handle it
-void    receive_line(char *line_read, t_token **token_list)
-{
-    int i;
-    t_token *new;
-
-    i = 0;
-    while(line_read[i] != '\0')
-    {
-        if(line_read[i] == ' ')
-        {
-            i++;
-            continue;
-        }
-        else if(line_read[i] == '\'' || line_read[i] == '"') //We put '\ to represent a literal single quote
-            new = extract_token_from_quote(line_read, &i);
-        else if(is_operator_char(line_read[i]))
-            new = extract_token_from_operator(line_read, &i);
-        else //for the actual words that doesnt start from quote
-            new = extract_token_from_word(line_read, &i);   
-        ft_lstadd_back(token_list, new);
-        new = NULL;              
-    }
+	i = 0;
+	has_space = 0;
+	new = NULL;
+	while (line_read[i] != '\0')
+	{
+		skip_spaces(line_read, &i, &has_space);
+		if (line_read[i] == '\0')
+			break ;
+		new = extract_next_token(line_read, &i);
+		if (!new)
+		{
+			free_token_list(token_list);
+			return ;
+		}
+		ft_lstadd_back_token(token_list, new, has_space);
+		has_space = 0;
+		new = NULL;
+	}
 }

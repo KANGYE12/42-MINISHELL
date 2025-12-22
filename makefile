@@ -5,13 +5,33 @@
 NAME = minishell
 
 # Find all .c files inside parsing/
-SRCS = $(wildcard parsing/*.c)
+SRCS =  parsing/check_args.c \
+		parsing/enviroment.c \
+		parsing/free.c \
+		parsing/main.c \
+		parsing/parse_cmd_helper.c \
+		parsing/parse_cmd.c \
+		parsing/parse_tokens.c \
+		parsing/remove_quotes.c \
+		parsing/token_special_cases.c \
+		parsing/token_split_helper.c \
+		parsing/tokens_split.c \
+		parsing/utils.c \
+		parsing/utils02.c \
+		parsing/variables_expansion.c \
+		parsing/variables_expansion02.c \
+		execute/builtins.c \
+		execute/builtins2.c \
+		execute/builtins3.c \
+		execute/execute.c \
+		execute/find_path.c \
+		execute/redirections.c 
 
 # Replace .c with .o (objects will be in the same folder)
 OBJS = $(SRCS:.c=.o)
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -Iinclude -Ilibft
+CFLAGS = -Wall -Wextra -Werror -Iinclude -Ilibft -g
 
 RM = rm -f
 
