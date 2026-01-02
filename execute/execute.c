@@ -6,7 +6,7 @@
 /*   By: iisraa11 <iisraa11@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 10:58:49 by iisraa11          #+#    #+#             */
-/*   Updated: 2025/12/22 16:19:53 by iisraa11         ###   ########.fr       */
+/*   Updated: 2026/01/01 18:07:39 by iisraa11         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,24 +57,26 @@ static void	child_proccess(t_cmd *cmd, t_env *my_env, int prev_fd,
 		free_double_ptr(envp_array);
 		exit(127);
 	}
+	check_file(path, cmd->argv[0], envp_array);
 	execve(path, cmd->argv, envp_array);
 	exit(1);
 }
 
 static int	execute_single_builtin(t_cmd *cmd, t_env **my_env)
 {
+	int	status;
 	int	save_stdin;
 	int	save_stdout;
 
 	save_stdin = dup(STDIN_FILENO);
 	save_stdout = dup(STDOUT_FILENO);
 	handle_redirections(cmd);
-	exec_builtin(cmd, my_env, 1);
+	status = exec_builtin(cmd, my_env, 1);
 	dup2(save_stdin, STDIN_FILENO);
 	dup2(save_stdout, STDOUT_FILENO);
 	close(save_stdin);
 	close(save_stdout);
-	return (0);
+	return (status);
 }
 
 static int	execute_child_pipeline(t_cmd *cmd, t_env *my_env, int prev_fd,
@@ -83,14 +85,20 @@ static int	execute_child_pipeline(t_cmd *cmd, t_env *my_env, int prev_fd,
 	pid_t	pid;
 
 	if (cmd->next)
-		pipe(pipe_fd);
+	{
+		if (pipe(pipe_fd) == -1)
+			return (-1);
+	}
 	pid = fork();
 	if (pid == 0)
 		child_proccess(cmd, my_env, prev_fd, pipe_fd);
 	if (prev_fd != -1)
 		close(prev_fd);
 	if (cmd->next)
+	{
+		close(pipe_fd[1]);
 		return (pipe_fd[0]);
+	}
 	return (-1);
 }
 
@@ -99,6 +107,8 @@ int	executor(t_cmd *cmd_list, t_env **my_env)
 	t_cmd	*cmd;
 	int		prev_fd;
 	int		pipe_fd[2];
+	int		status;
+	int		last_status;
 
 	if (!cmd_list || !cmd_list->argv || !cmd_list->argv[0])
 		return (0);
@@ -111,7 +121,8 @@ int	executor(t_cmd *cmd_list, t_env **my_env)
 		prev_fd = execute_child_pipeline(cmd, *my_env, prev_fd, pipe_fd);
 		cmd = cmd->next;
 	}
-	while (wait(NULL) > 0)
-		;
-	return (0);
+	last_status = 0;
+	while (wait(&status) > 0)
+		last_status = status;
+	return (exit_code(last_status));
 }
