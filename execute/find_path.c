@@ -6,11 +6,28 @@
 /*   By: iisraa11 <iisraa11@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/31 13:14:18 by iisraa11          #+#    #+#             */
-/*   Updated: 2025/12/22 16:28:12 by iisraa11         ###   ########.fr       */
+/*   Updated: 2026/01/01 16:01:28 by iisraa11         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+void	check_file(char *path, char *cmd, char **envp)
+{
+	if (access(path, F_OK) != 0)
+	{
+		printf("minishell: %s: No such file or directory\n", cmd);
+		free_double_ptr(envp);
+		exit(127);
+	}
+	if (access(path, X_OK) != 0)
+	{
+		printf("minishell: %s: Permission denied\n", cmd);
+		free_double_ptr(envp);
+		exit(126);
+	}
+}
+
 
 static int	env_list_size(t_env *env)
 {
