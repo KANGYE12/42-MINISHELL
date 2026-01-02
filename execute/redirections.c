@@ -6,11 +6,20 @@
 /*   By: iisraa11 <iisraa11@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 11:41:31 by iisraa11          #+#    #+#             */
-/*   Updated: 2025/12/22 16:25:08 by iisraa11         ###   ########.fr       */
+/*   Updated: 2025/12/30 18:07:26 by iisraa11         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+int exit_code(int status)
+{
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	else if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
+	return (status);
+}
 
 static int	open_input_file(t_cmd *cmd)
 {
