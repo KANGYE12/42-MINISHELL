@@ -6,7 +6,7 @@
 /*   By: iisraa11 <iisraa11@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 16:29:07 by iisraa11          #+#    #+#             */
-/*   Updated: 2025/12/22 16:33:25 by iisraa11         ###   ########.fr       */
+/*   Updated: 2026/01/01 16:02:16 by iisraa11         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,6 +155,7 @@ t_cmd				*parse_tokens_to_cmds(t_token *token_list, t_env **env,
 
 // execute
 int					executor(t_cmd *cmd_list, t_env **my_env);
+void				check_file(char *path, char *cmd, char **envp);
 
 // path
 char				*find_cmd_path(char *cmd, t_env *my_env);
@@ -172,5 +173,8 @@ int					is_builtin(char *cmd);
 
 // redirections
 void				handle_redirections(t_cmd *cmd);
+
+// exit code
+int					exit_code(int status);
 
 #endif
