@@ -28,7 +28,6 @@ void	check_file(char *path, char *cmd, char **envp)
 	}
 }
 
-
 static int	env_list_size(t_env *env)
 {
 	int	count;

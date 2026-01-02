@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-int exit_code(int status)
+int	exit_code(int status)
 {
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
