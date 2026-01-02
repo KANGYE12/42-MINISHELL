@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin3.c                                         :+:      :+:    :+:   */
+/*   builtins3.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: iisraa11 <iisraa11@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 16:18:50 by iisraa11          #+#    #+#             */
-/*   Updated: 2025/12/22 16:23:03 by iisraa11         ###   ########.fr       */
+/*   Updated: 2025/12/30 18:13:30 by iisraa11         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,5 +52,5 @@ int	exec_builtin(t_cmd *cmd, t_env **my_env, int in_parent)
 		return (builtin_env(*my_env));
 	if (!ft_strcmp(a[0], "exit") && in_parent)
 		return (builtin_exit(a));
-	return (0);
+	return (127);
 }
