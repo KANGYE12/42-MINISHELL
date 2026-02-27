@@ -23,6 +23,7 @@ SRCS =  parsing/check_args.c \
 		execute/builtins.c \
 		execute/builtins2.c \
 		execute/builtins3.c \
+		execute/builtins4.c \
 		execute/execute.c \
 		execute/find_path.c \
 		execute/redirections.c 
