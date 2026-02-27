@@ -6,7 +6,7 @@
 /*   By: isrguerr <isrguerr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 16:29:07 by iisraa11          #+#    #+#             */
-/*   Updated: 2026/02/27 15:35:10 by isrguerr         ###   ########.fr       */
+/*   Updated: 2026/02/27 16:51:57 by isrguerr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,6 +164,7 @@ char				*find_cmd_path(char *cmd, t_env *my_env);
 int					exec_builtin(t_cmd *cmd, t_env **my_env, int in_parent);
 int					builtin_cd(char **argv);
 int					builtin_export(char **argv, t_env **env_list);
+char				*process_escape_sequences(char *str);
 int					builtin_unset(char **argv, t_env **env_list);
 int					builtin_env(t_env *env_list);
 int					builtin_exit(char **argv);

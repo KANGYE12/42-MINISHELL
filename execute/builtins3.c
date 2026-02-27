@@ -6,7 +6,7 @@
 /*   By: isrguerr <isrguerr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 16:18:50 by iisraa11          #+#    #+#             */
-/*   Updated: 2026/02/27 15:35:55 by isrguerr         ###   ########.fr       */
+/*   Updated: 2026/02/27 16:57:55 by isrguerr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	is_builtin(char *cmd)
 int	builtin_pwd(char **argv)
 {
 	char	cwd[4096];
-	
+
 	if (argv[1])
 	{
 		write(2, "pwd: too many arguments\n", 24);

@@ -6,11 +6,29 @@
 /*   By: isrguerr <isrguerr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 18:59:46 by kanye             #+#    #+#             */
-/*   Updated: 2026/02/27 16:04:52 by isrguerr         ###   ########.fr       */
+/*   Updated: 2026/02/27 16:55:10 by isrguerr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+static int	handle_backslash(char *delimiter, int *i,
+		int single_quote, int double_quote)
+{
+	if (!single_quote && !double_quote)
+	{
+		(*i)++;
+		return (1);
+	}
+	if (double_quote && (delimiter[*i + 1] == '$'
+			|| delimiter[*i + 1] == '\\'
+			|| delimiter[*i + 1] == '"'))
+	{
+		(*i)++;
+		return (1);
+	}
+	return (0);
+}
 
 static int	handle_quotes_and_escapes(char *delimiter, int *i,
 		int *single_quote, int *double_quote)
@@ -28,20 +46,8 @@ static int	handle_quotes_and_escapes(char *delimiter, int *i,
 		return (1);
 	}
 	if (delimiter[*i] == '\\')
-	{
-		if (!*single_quote && !*double_quote)
-		{
-			(*i)++;
-			return (1);
-		}
-		else if (*double_quote && (delimiter[*i + 1] == '$'
-				|| delimiter[*i + 1] == '\\' || delimiter[*i + 1] == '"'))
-		{
-			(*i)++;
-			return (1);
-		}
-		return (0);
-	}
+		return (handle_backslash(delimiter, i,
+				*single_quote, *double_quote));
 	return (0);
 }
 
