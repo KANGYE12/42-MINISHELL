@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   variables_expansion.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kanye <kanye@student.42.fr>                +#+  +:+       +#+        */
+/*   By: isrguerr <isrguerr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 18:59:58 by kanye             #+#    #+#             */
-/*   Updated: 2025/12/21 20:31:55 by kanye            ###   ########.fr       */
+/*   Updated: 2026/02/27 13:49:45 by isrguerr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ static char	*expand_dollar(char *str, int *i, t_env **env, int last_exit_status)
 	int		var_len;
 	char	*var_name;
 
+	if (str[*i] == '\0')
+		return (ft_strdup("$"));
 	if (str[*i] == '?')
 	{
 		value = ft_itoa(last_exit_status);
