@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins2.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iisraa11 <iisraa11@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isrguerr <isrguerr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 16:07:03 by iisraa11          #+#    #+#             */
-/*   Updated: 2025/12/22 16:21:54 by iisraa11         ###   ########.fr       */
+/*   Updated: 2026/02/27 14:47:50 by isrguerr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,26 +36,49 @@ static void	add_or_update_env(t_env **env_list, char *key, char *value)
 	*env_list = new;
 }
 
+static int	is_valid_identifier(const char *s, int len)
+{
+	int	j;
+
+	if (len == 0)
+		return (0);
+	if (!ft_isalpha(s[0]) && s[0] != '_')
+		return (0);
+	j = 1;
+	while (j < len)
+	{
+		if (!ft_isalnum(s[j]) && s[j] != '_')
+			return (0);
+		j++;
+	}
+	return (1);
+}
+
 int	builtin_export(char **argv, t_env **env_list)
 {
-	int		i;
 	char	*eq;
 	char	*key;
 	char	*value;
 
-	i = 1;
-	while (argv[i])
+	argv++;
+	while (*argv)
 	{
-		eq = ft_strchr(argv[i], '=');
+		eq = ft_strchr(*argv, '=');
 		if (!eq)
 		{
-			i++;
+			argv++;
 			continue ;
 		}
-		key = ft_strndup(argv[i], eq - argv[i]);
+		if (!is_valid_identifier(*argv, eq - *argv))
+		{
+			ft_putstr_fd("minishell: export: not a valid identifier\n", 2);
+			argv++;
+			continue ;
+		}
+		key = ft_strndup(*argv, eq - *argv);
 		value = ft_strdup(eq + 1);
 		add_or_update_env(env_list, key, value);
-		i++;
+		argv++;
 	}
 	return (0);
 }
