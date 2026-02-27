@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   remove_quotes.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kanye <kanye@student.42.fr>                +#+  +:+       +#+        */
+/*   By: isrguerr <isrguerr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 18:59:46 by kanye             #+#    #+#             */
-/*   Updated: 2025/12/21 18:05:29 by kanye            ###   ########.fr       */
+/*   Updated: 2026/02/27 16:04:52 by isrguerr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,17 @@ static int	handle_quotes_and_escapes(char *delimiter, int *i,
 	if (delimiter[*i] == '\\')
 	{
 		if (!*single_quote && !*double_quote)
+		{
 			(*i)++;
+			return (1);
+		}
 		else if (*double_quote && (delimiter[*i + 1] == '$'
 				|| delimiter[*i + 1] == '\\' || delimiter[*i + 1] == '"'))
+		{
 			(*i)++;
-		return (1);
+			return (1);
+		}
+		return (0);
 	}
 	return (0);
 }
