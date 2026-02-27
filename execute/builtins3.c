@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins3.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iisraa11 <iisraa11@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isrguerr <isrguerr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 16:18:50 by iisraa11          #+#    #+#             */
-/*   Updated: 2025/12/30 18:13:30 by iisraa11         ###   ########.fr       */
+/*   Updated: 2026/02/27 15:35:55 by isrguerr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,15 @@ int	is_builtin(char *cmd)
 		|| !ft_strcmp(cmd, "env") || !ft_strcmp(cmd, "exit"));
 }
 
-int	builtin_pwd(void)
+int	builtin_pwd(char **argv)
 {
 	char	cwd[4096];
-
+	
+	if (argv[1])
+	{
+		write(2, "pwd: too many arguments\n", 24);
+		return (1);
+	}
 	if (getcwd(cwd, sizeof(cwd)))
 	{
 		write(1, cwd, ft_strlen(cwd));
@@ -41,7 +46,7 @@ int	exec_builtin(t_cmd *cmd, t_env **my_env, int in_parent)
 	if (!ft_strcmp(a[0], "echo"))
 		return (builtin_echo(a));
 	if (!ft_strcmp(a[0], "pwd"))
-		return (builtin_pwd());
+		return (builtin_pwd(a));
 	if (!ft_strcmp(a[0], "cd") && in_parent)
 		return (builtin_cd(a));
 	if (!ft_strcmp(a[0], "export") && in_parent)
