@@ -6,7 +6,7 @@
 /*   By: iisraa11 <iisraa11@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:31:06 by iisraa11          #+#    #+#             */
-/*   Updated: 2026/03/01 13:52:39 by iisraa11         ###   ########.fr       */
+/*   Updated: 2026/03/01 19:22:44 by iisraa11         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,32 +109,4 @@ int	builtin_exit(char **argv)
 	}
 	printf("exit\n");
 	exit(status);
-}
-
-int	builtin_cd(char **argv, t_env **env)
-{
-	char	*target;
-
-	if (argv[2])
-	{
-		ft_putstr_fd("minishell: cd: too many arguments\n", 2);
-		return (1);
-	}
-	if (!argv[1])
-	{
-		target = get_env_value(env, "HOME");
-		if (!target)
-		{
-			ft_putstr_fd("minishell: cd: HOME not set\n", 2);
-			return (1);
-		}
-	}
-	else
-		target = argv[1];
-	if (chdir(target) != 0)
-	{
-		perror("minishell: cd");
-		return (1);
-	}
-	return (0);
 }

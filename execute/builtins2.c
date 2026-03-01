@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins2.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isrguerr <isrguerr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iisraa11 <iisraa11@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 16:07:03 by iisraa11          #+#    #+#             */
-/*   Updated: 2026/02/27 14:47:50 by isrguerr         ###   ########.fr       */
+/*   Updated: 2026/03/01 19:37:34 by iisraa11         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,52 +54,46 @@ static int	is_valid_identifier(const char *s, int len)
 	return (1);
 }
 
-int	builtin_export(char **argv, t_env **env_list)
+static int	export_one(char *arg, t_env **env_list)
 {
 	char	*eq;
 	char	*key;
 	char	*value;
-	int	status;
 
-	argv++;
-	status = 0;
-	while (*argv)
+	eq = ft_strchr(arg, '=');
+	if (!eq)
 	{
-		eq = ft_strchr(*argv, '=');
-		if (!eq)
-		{
-			if (!is_valid_identifier(*argv, ft_strlen(*argv)))
-			{
-				ft_putstr_fd("minishell: export: not a valid identifier\n", 2);
-				status = 1;
-			}
-			argv++;
-			continue ;
-		}
-		if (!is_valid_identifier(*argv, eq - *argv))
+		if (!is_valid_identifier(arg, ft_strlen(arg)))
 		{
 			ft_putstr_fd("minishell: export: not a valid identifier\n", 2);
-			status = 1;
-			argv++;
-			continue ;
+			return (1);
 		}
-		key = ft_strndup(*argv, eq - *argv);
-		value = ft_strdup(eq + 1);
-		add_or_update_env(env_list, key, value);
+		return (0);
+	}
+	if (!is_valid_identifier(arg, eq - arg))
+	{
+		ft_putstr_fd("minishell: export: not a valid identifier\n", 2);
+		return (1);
+	}
+	key = ft_strndup(arg, eq - arg);
+	value = ft_strdup(eq + 1);
+	add_or_update_env(env_list, key, value);
+	return (0);
+}
+
+int	builtin_export(char **argv, t_env **env_list)
+{
+	int	status;
+
+	status = 0;
+	argv++;
+	while (*argv)
+	{
+		if (export_one(*argv, env_list))
+			return (1);
 		argv++;
 	}
 	return (status);
-}
-
-static void	delete_env_node(t_env **env_list, t_env *node, t_env *prev)
-{
-	if (prev)
-		prev->next = node->next;
-	else
-		*env_list = node->next;
-	free(node->key);
-	free(node->value);
-	free(node);
 }
 
 int	builtin_unset(char **argv, t_env **env_list)

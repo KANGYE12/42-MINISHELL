@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins4.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isrguerr <isrguerr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iisraa11 <iisraa11@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/27 16:49:13 by isrguerr          #+#    #+#             */
-/*   Updated: 2026/02/27 16:56:48 by isrguerr         ###   ########.fr       */
+/*   Updated: 2026/03/01 19:25:46 by iisraa11         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,4 +74,43 @@ int	builtin_env(t_env *env_list)
 		tmp = tmp->next;
 	}
 	return (0);
+}
+
+int	builtin_cd(char **argv, t_env **env)
+{
+	char	*target;
+
+	if (argv[2])
+	{
+		ft_putstr_fd("minishell: cd: too many arguments\n", 2);
+		return (1);
+	}
+	if (!argv[1])
+	{
+		target = get_env_value(env, "HOME");
+		if (!target)
+		{
+			ft_putstr_fd("minishell: cd: HOME not set\n", 2);
+			return (1);
+		}
+	}
+	else
+		target = argv[1];
+	if (chdir(target) != 0)
+	{
+		perror("minishell: cd");
+		return (1);
+	}
+	return (0);
+}
+
+void	delete_env_node(t_env **env_list, t_env *node, t_env *prev)
+{
+	if (prev)
+		prev->next = node->next;
+	else
+		*env_list = node->next;
+	free(node->key);
+	free(node->value);
+	free(node);
 }

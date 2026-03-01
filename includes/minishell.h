@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isrguerr <isrguerr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iisraa11 <iisraa11@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 16:29:07 by iisraa11          #+#    #+#             */
-/*   Updated: 2026/02/27 16:51:57 by isrguerr         ###   ########.fr       */
+/*   Updated: 2026/03/01 19:25:18 by iisraa11         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,6 +171,7 @@ int					builtin_exit(char **argv);
 int					builtin_echo(char **argv);
 int					builtin_pwd(char **argv);
 int					is_builtin(char *cmd);
+void				delete_env_node(t_env **env_list, t_env *node, t_env *prev);
 
 // redirections
 void				handle_redirections(t_cmd *cmd);
