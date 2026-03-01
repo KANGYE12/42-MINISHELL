@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   variables_expansion.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: isrguerr <isrguerr@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iisraa11 <iisraa11@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 18:59:58 by kanye             #+#    #+#             */
-/*   Updated: 2026/02/27 13:49:45 by isrguerr         ###   ########.fr       */
+/*   Updated: 2026/03/01 13:23:42 by iisraa11         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ static char	*expand_dollar(char *str, int *i, t_env **env, int last_exit_status)
 	else
 	{
 		value = ft_strdup("$");
-		(*i)++;
 	}
 	return (value);
 }
@@ -63,7 +62,8 @@ static void	append_expanded(char **res, char *str, int start, t_exp *e)
 {
 	char	*val;
 
-	*res = append_chunk(*res, str, start, e->i++);
+	*res = append_chunk(*res, str, start, e->i);
+	e->i++;
 	val = expand_dollar(str, &e->i, e->env, e->last_exit_status);
 	*res = ft_strjoin_free_s1(*res, val);
 	free(val);
@@ -88,7 +88,7 @@ char	*expand_variables(char *str, t_env **env, int last_exit_status)
 			&& (e.i == 0 || str[e.i - 1] != '\\'))
 		{
 			append_expanded(&res, str, e.start, &e);
-			e.start = e.i--;
+			e.start = e.i;
 		}
 		e.i++;
 	}

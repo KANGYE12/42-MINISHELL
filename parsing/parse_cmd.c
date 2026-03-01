@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_cmd.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kanye <kanye@student.42.fr>                +#+  +:+       +#+        */
+/*   By: iisraa11 <iisraa11@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/20 18:59:41 by kanye             #+#    #+#             */
-/*   Updated: 2025/12/21 18:11:12 by kanye            ###   ########.fr       */
+/*   Updated: 2026/03/01 13:19:18 by iisraa11         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ static int	add_to_argv(t_cmd *cmd, char *str, int *argc)
 		perror("ERROR IN REALLOC");
 		return (ERROR);
 	}
+	if (str == NULL)
+		str = "";
 	temp_argv[*argc] = ft_strdup(str);
 	if (!temp_argv[*argc])
 	{

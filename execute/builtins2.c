@@ -59,19 +59,27 @@ int	builtin_export(char **argv, t_env **env_list)
 	char	*eq;
 	char	*key;
 	char	*value;
+	int	status;
 
 	argv++;
+	status = 0;
 	while (*argv)
 	{
 		eq = ft_strchr(*argv, '=');
 		if (!eq)
 		{
+			if (!is_valid_identifier(*argv, ft_strlen(*argv)))
+			{
+				ft_putstr_fd("minishell: export: not a valid identifier\n", 2);
+				status = 1;
+			}
 			argv++;
 			continue ;
 		}
 		if (!is_valid_identifier(*argv, eq - *argv))
 		{
 			ft_putstr_fd("minishell: export: not a valid identifier\n", 2);
+			status = 1;
 			argv++;
 			continue ;
 		}
@@ -80,7 +88,7 @@ int	builtin_export(char **argv, t_env **env_list)
 		add_or_update_env(env_list, key, value);
 		argv++;
 	}
-	return (0);
+	return (status);
 }
 
 static void	delete_env_node(t_env **env_list, t_env *node, t_env *prev)

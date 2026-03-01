@@ -48,7 +48,7 @@ int	exec_builtin(t_cmd *cmd, t_env **my_env, int in_parent)
 	if (!ft_strcmp(a[0], "pwd"))
 		return (builtin_pwd(a));
 	if (!ft_strcmp(a[0], "cd") && in_parent)
-		return (builtin_cd(a));
+		return (builtin_cd(a, my_env));
 	if (!ft_strcmp(a[0], "export") && in_parent)
 		return (builtin_export(a, my_env));
 	if (!ft_strcmp(a[0], "unset") && in_parent)

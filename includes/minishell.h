@@ -162,7 +162,7 @@ char				*find_cmd_path(char *cmd, t_env *my_env);
 
 // builtins
 int					exec_builtin(t_cmd *cmd, t_env **my_env, int in_parent);
-int					builtin_cd(char **argv);
+int					builtin_cd(char **argv, t_env **env);
 int					builtin_export(char **argv, t_env **env_list);
 char				*process_escape_sequences(char *str);
 int					builtin_unset(char **argv, t_env **env_list);
