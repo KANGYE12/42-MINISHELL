@@ -3,62 +3,65 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iisraa11 <iisraa11@student.42.fr>          +#+  +:+       +#+        */
+/*   By: isrguerr <isrguerr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 16:31:06 by iisraa11          #+#    #+#             */
-/*   Updated: 2026/03/01 19:22:44 by iisraa11         ###   ########.fr       */
+/*   Updated: 2026/03/03 12:38:29 by isrguerr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-static int	is_echo_flag(char *str)
+static int	has_echo_flag(char *str, char flag)
 {
 	int	i;
+	int	found;
 
 	if (!str || str[0] != '-' || !str[1])
 		return (0);
 	i = 1;
+	found = 0;
 	while (str[i])
 	{
 		if (str[i] != 'n' && str[i] != 'e')
 			return (0);
+		if (str[i] == flag)
+			found = 1;
 		i++;
 	}
-	return (1);
+	return (found);
 }
 
-static int	has_echo_flag(char *str, char flag)
+static void	echo_parse_flags(char **argv, int *i, int *nl, int *esc)
 {
-	int	i;
-
-	i = 1;
-	while (str[i])
+	while (argv[*i] && (has_echo_flag(argv[*i], 'n')
+			|| has_echo_flag(argv[*i], 'e')))
 	{
-		if (str[i] == flag)
-			return (1);
-		i++;
+		if (has_echo_flag(argv[*i], 'n'))
+			*nl = 0;
+		if (has_echo_flag(argv[*i], 'e'))
+			*esc = 1;
+		(*i)++;
 	}
-	return (0);
 }
 
 int	builtin_echo(char **argv)
 {
 	int		i;
 	int		newline;
+	int		escape;
 	char	*processed;
 
 	i = 1;
 	newline = 1;
-	while (argv[i] && is_echo_flag(argv[i]))
-	{
-		if (has_echo_flag(argv[i], 'n'))
-			newline = 0;
-		i++;
-	}
+	escape = 0;
+	echo_parse_flags(argv, &i, &newline, &escape);
 	while (argv[i])
 	{
-		processed = process_escape_sequences(argv[i]);
+		if (escape)
+			processed = process_escape_sequences(argv[i]);
+		else
+			processed = ft_strdup(argv[i]);
 		write(1, processed, ft_strlen(processed));
 		free(processed);
 		if (argv[i + 1])
