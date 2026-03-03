@@ -1,7 +1,7 @@
 
 # minishell
 
-*This project was created as part of the 42 curriculum by <kanye> <isrguerr>.*
+*This project was created as part of the 42 curriculum by kanye and isrguerr.*
 
 ## Description
 
